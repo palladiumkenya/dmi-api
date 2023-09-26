@@ -1,6 +1,6 @@
 package com.kenyahmis.dmiapi.controller;
 
-import com.kenyahmis.dmiapi.model.RespiratoryIllnessCaseDto;
+import com.kenyahmis.dmiapi.dto.RespiratoryIllnessCaseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;

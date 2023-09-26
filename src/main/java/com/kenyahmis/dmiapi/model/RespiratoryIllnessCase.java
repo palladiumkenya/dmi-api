@@ -1,9 +1,9 @@
 package com.kenyahmis.dmiapi.model;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.Type;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -14,33 +14,29 @@ public class RespiratoryIllnessCase {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String patientUniqueId;
+    private String nupi;
     private String visitUniqueId;
     private String mflCode;
-    private LocalDate interviewDate;
+    private LocalDateTime interviewDate;
     private Boolean verbalConsentingDone;
-    @Column(name = "dob")
     private LocalDate dateOfBirth;
-    private Integer infantAge;
-    private Integer age;
+    private Integer ageInMonths;
+    private Integer ageInYears;
     private String sex;
     private String address;
-    private LocalDate illnessOnsetDate;
     private LocalDate admissionDate;
     private LocalDate outpatientDate;
     private Double temperature;
-    @Column(columnDefinition = "varchar[]", name = "infant_complaints")
-    @Type(value = com.kenyahmis.dmiapi.model.CustomStringArrayType.class)
-    private String[] infantComplaints;
-    @Column(columnDefinition = "varchar[]", name = "complaints")
-    @Type(value = com.kenyahmis.dmiapi.model.CustomStringArrayType.class)
-    private String[] complaints;
-    private Integer durationOfComplaints;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
+    private List<Complaint> complaints;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
+    private List<Lab> labs;
     private String county;
     private String subCounty;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime loadDate;
-
+    private Boolean voided;
     public RespiratoryIllnessCase() {
     }
 
@@ -60,6 +56,14 @@ public class RespiratoryIllnessCase {
         this.patientUniqueId = patientUniqueId;
     }
 
+    public String getNupi() {
+        return nupi;
+    }
+
+    public void setNupi(String nupi) {
+        this.nupi = nupi;
+    }
+
     public String getVisitUniqueId() {
         return visitUniqueId;
     }
@@ -76,11 +80,11 @@ public class RespiratoryIllnessCase {
         this.mflCode = mflCode;
     }
 
-    public LocalDate getInterviewDate() {
+    public LocalDateTime getInterviewDate() {
         return interviewDate;
     }
 
-    public void setInterviewDate(LocalDate interviewDate) {
+    public void setInterviewDate(LocalDateTime interviewDate) {
         this.interviewDate = interviewDate;
     }
 
@@ -88,8 +92,8 @@ public class RespiratoryIllnessCase {
         return verbalConsentingDone;
     }
 
-    public void setVerbalConsentingDone(Boolean verbalConsentDone) {
-        this.verbalConsentingDone = verbalConsentDone;
+    public void setVerbalConsentingDone(Boolean verbalConsentingDone) {
+        this.verbalConsentingDone = verbalConsentingDone;
     }
 
     public LocalDate getDateOfBirth() {
@@ -100,20 +104,20 @@ public class RespiratoryIllnessCase {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Integer getInfantAge() {
-        return infantAge;
+    public Integer getAgeInMonths() {
+        return ageInMonths;
     }
 
-    public void setInfantAge(Integer infantAge) {
-        this.infantAge = infantAge;
+    public void setAgeInMonths(Integer ageInMonths) {
+        this.ageInMonths = ageInMonths;
     }
 
-    public Integer getAge() {
-        return age;
+    public Integer getAgeInYears() {
+        return ageInYears;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setAgeInYears(Integer ageInYears) {
+        this.ageInYears = ageInYears;
     }
 
     public String getSex() {
@@ -130,14 +134,6 @@ public class RespiratoryIllnessCase {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public LocalDate getIllnessOnsetDate() {
-        return illnessOnsetDate;
-    }
-
-    public void setIllnessOnsetDate(LocalDate illnessOnsetDate) {
-        this.illnessOnsetDate = illnessOnsetDate;
     }
 
     public LocalDate getAdmissionDate() {
@@ -164,28 +160,20 @@ public class RespiratoryIllnessCase {
         this.temperature = temperature;
     }
 
-    public String[] getInfantComplaints() {
-        return infantComplaints;
-    }
-
-    public void setInfantComplaints(String[] infantComplaints) {
-        this.infantComplaints = infantComplaints;
-    }
-
-    public String[] getComplaints() {
+    public List<Complaint> getComplaints() {
         return complaints;
     }
 
-    public void setComplaints(String[] complaints) {
+    public void setComplaints(List<Complaint> complaints) {
         this.complaints = complaints;
     }
 
-    public Integer getDurationOfComplaints() {
-        return durationOfComplaints;
+    public List<Lab> getLabs() {
+        return labs;
     }
 
-    public void setDurationOfComplaints(Integer durationOfComplaints) {
-        this.durationOfComplaints = durationOfComplaints;
+    public void setLabs(List<Lab> labs) {
+        this.labs = labs;
     }
 
     public String getCounty() {
@@ -226,5 +214,13 @@ public class RespiratoryIllnessCase {
 
     public void setLoadDate(LocalDateTime loadDate) {
         this.loadDate = loadDate;
+    }
+
+    public Boolean getVoided() {
+        return voided;
+    }
+
+    public void setVoided(Boolean voided) {
+        this.voided = voided;
     }
 }

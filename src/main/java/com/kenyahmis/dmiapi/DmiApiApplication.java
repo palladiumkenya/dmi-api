@@ -6,6 +6,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -37,7 +38,7 @@ public class DmiApiApplication {
         return new KafkaAdmin(configs);
     }
 
-    @Bean
+
     public NewTopic topic() {
         return TopicBuilder.name("visitTopic")
                 .partitions(2)
@@ -86,7 +87,7 @@ public class DmiApiApplication {
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TYPE_MAPPINGS, "respiratoryIllnessCase:com.kenyahmis.dmiapi.model.RespiratoryIllnessCaseDto");
+        props.put(JsonDeserializer.TYPE_MAPPINGS, "respiratoryIllnessCase:com.kenyahmis.dmiapi.dto.RespiratoryIllnessCaseDto");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         return props;
     }

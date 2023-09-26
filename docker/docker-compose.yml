@@ -9,12 +9,12 @@ services:
     depends_on:
       - kafka-01
       - dmi-postgres
+    restart: unless-stopped
     environment:
       DATABASE_URL: ${DATABASE_URL}
       DATABASE_USER: ${DATABASE_USER}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS}
-
 
   dmi-postgres:
     container_name: postgres_container
@@ -33,8 +33,10 @@ services:
   kafka-01:
     image: bitnami/kafka:3.4.1
     user: root
+
     ports:
       - "9094:9094"
+    restart: unless-stopped
     environment:
       BITNAMI_DEBUG: 'true'
       KAFKA_CFG_NODE_ID: 1
@@ -42,6 +44,6 @@ services:
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
       KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka-01:9092,EXTERNAL://kafka-01:9094
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka-01:9092,EXTERNAL://172.17.0.1:9094
       KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka-01:9093
       ALLOW_PLAINTEXT_LISTENER: 'yes'
