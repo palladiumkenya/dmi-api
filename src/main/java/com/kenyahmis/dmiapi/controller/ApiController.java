@@ -1,6 +1,7 @@
 package com.kenyahmis.dmiapi.controller;
 
 import com.kenyahmis.dmiapi.dto.RespiratoryIllnessCaseDto;
+import com.kenyahmis.dmiapi.model.BatchAPIResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -30,6 +31,7 @@ public class ApiController {
     @PostMapping(value = "/case/batch")
     private ResponseEntity<?> addBatchCases(@RequestBody List<RespiratoryIllnessCaseDto> request){
         request.forEach(r -> kafkaTemplate.send("visitTopic", r));
-        return new ResponseEntity<>(null, HttpStatus.OK);
+
+        return new ResponseEntity<>(new BatchAPIResponse("Success", ""), HttpStatus.OK);
     }
 }
