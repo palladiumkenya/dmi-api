@@ -5,18 +5,20 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-
+import jakarta.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class RespiratoryIllnessCaseDto {
+public class IllnessCaseDto {
 
+    @NotEmpty
     private String patientUniqueId;
     private String nupi;
+    @NotEmpty
     private String caseUniqueId;
+    @NotEmpty
     private String hospitalIdNumber;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -45,7 +47,7 @@ public class RespiratoryIllnessCaseDto {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime updatedAt;
 
-    public RespiratoryIllnessCaseDto() {
+    public IllnessCaseDto() {
     }
 
     public String getPatientUniqueId() {

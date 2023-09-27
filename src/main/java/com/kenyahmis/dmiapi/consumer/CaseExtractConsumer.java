@@ -1,11 +1,12 @@
 package com.kenyahmis.dmiapi.consumer;
 
+import com.kenyahmis.dmiapi.dto.CaseMessageDto;
 import com.kenyahmis.dmiapi.dto.ComplaintDto;
 import com.kenyahmis.dmiapi.dto.LabDto;
 import com.kenyahmis.dmiapi.model.Complaint;
 import com.kenyahmis.dmiapi.model.Lab;
 import com.kenyahmis.dmiapi.model.RespiratoryIllnessCase;
-import com.kenyahmis.dmiapi.dto.RespiratoryIllnessCaseDto;
+import com.kenyahmis.dmiapi.dto.IllnessCaseDto;
 import com.kenyahmis.dmiapi.repository.ComplaintRepository;
 import com.kenyahmis.dmiapi.repository.LabRepository;
 import com.kenyahmis.dmiapi.repository.RespiratoryIllnessCaseRepository;
@@ -109,8 +110,9 @@ public class CaseExtractConsumer {
     }
 
     @KafkaListener(id = "visitListener", topics = "visitTopic", containerFactory = "kafkaListenerContainerFactory")
-    public void listenToMessage(List<RespiratoryIllnessCaseDto> messages) {
-        messages.forEach(m -> {
+    public void listenToMessage(List<CaseMessageDto> messages) {
+        messages.forEach(caseMessageDto -> {
+            IllnessCaseDto m = caseMessageDto.getIllnessCaseDto();
             Optional<RespiratoryIllnessCase>  optionalRespiratoryIllnessCase = caseRepository.findByVisitUniqueIdAndMflCode(m.getCaseUniqueId(), m.getHospitalIdNumber());
             RespiratoryIllnessCase respiratoryIllnessCase;
 
@@ -134,7 +136,6 @@ public class CaseExtractConsumer {
                 respiratoryIllnessCase.setVoided(m.getVoided());
                 respiratoryIllnessCase.setLoadDate(LocalDateTime.now());
                 caseRepository.save(respiratoryIllnessCase);
-
                 // update complaints
                 updateComplaints(m.getComplaintDtoList(), respiratoryIllnessCase);
 
@@ -143,6 +144,7 @@ public class CaseExtractConsumer {
             } else {
                 // created new case
                 respiratoryIllnessCase = new RespiratoryIllnessCase();
+                respiratoryIllnessCase.setBatchId(caseMessageDto.getBatchId());
                 respiratoryIllnessCase.setPatientUniqueId(m.getPatientUniqueId());
                 respiratoryIllnessCase.setNupi(m.getNupi());
                 respiratoryIllnessCase.setVisitUniqueId(m.getCaseUniqueId());
@@ -164,6 +166,7 @@ public class CaseExtractConsumer {
                 labRepository.saveAll(mapLabDtoToLab(m.getLabDtoList(), respiratoryIllnessCase));
                 complaintRepository.saveAll(mapComplaintDtoToComplaint(m.getComplaintDtoList(), respiratoryIllnessCase));
             }
+
             LOGGER.info("Consumed message is: {}", m.toString());
         });
     }

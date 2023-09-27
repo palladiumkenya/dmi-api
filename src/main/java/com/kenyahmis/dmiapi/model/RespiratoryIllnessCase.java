@@ -13,6 +13,8 @@ public class RespiratoryIllnessCase {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @JoinColumn(name = "batchId", referencedColumnName = "id")
+    private UUID batchId;
     private String patientUniqueId;
     private String nupi;
     private String visitUniqueId;
@@ -46,6 +48,14 @@ public class RespiratoryIllnessCase {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public UUID getBatchId() {
+        return batchId;
+    }
+
+    public void setBatchId(UUID batchId) {
+        this.batchId = batchId;
     }
 
     public String getPatientUniqueId() {
