@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,9 +54,10 @@ public class ApiController {
 
     }
     @PostMapping(value = "/case/batch")
-    private ResponseEntity<?> addBatchCases(@RequestBody List<IllnessCaseDto> request){
+    private ResponseEntity<?> addBatchCases(@RequestBody List<IllnessCaseDto> request, @AuthenticationPrincipal Jwt jwt){
         // Create Batch Entry
         BatchOperations batch = new BatchOperations(request.size(), "INCOMPLETE", LocalDateTime.now());
+        LOGGER.info("Working with request from {}", jwt.getClaimAsString("emr"));
         batchOperationsRepository.save(batch);
         request.forEach(r -> kafkaTemplate.send("visitTopic", new CaseMessageDto(batch.getId(), r)));
 

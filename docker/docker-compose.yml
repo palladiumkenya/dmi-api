@@ -5,17 +5,19 @@ services:
     build: ../
     image: pnthusi/dmi-api:latest
     ports:
-      - "8088:8080"
+      - "8088:8088"
     depends_on:
       - kafka-01
       - dmi-postgres
+      - keycloak
     restart: unless-stopped
     environment:
       DATABASE_URL: ${DATABASE_URL}
       DATABASE_USER: ${DATABASE_USER}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS}
-
+      KEYCLOAK_ISSUER_URL: ${KEYCLOAK_ISSUER_URL}
+      KEYCLOAK_JWT_CERT_URL: ${KEYCLOAK_JWT_CERT_URL}
   dmi-postgres:
     container_name: postgres_container
     image: postgres:11-bullseye
@@ -29,11 +31,17 @@ services:
     ports:
       - "5432:5432"
     restart: unless-stopped
-
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    command: 'start-dev'
   kafka-01:
     image: bitnami/kafka:3.4.1
     user: root
-
     ports:
       - "9094:9094"
     restart: unless-stopped
