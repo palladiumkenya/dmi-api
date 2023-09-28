@@ -29,6 +29,7 @@ public class RespiratoryIllnessCase {
     private LocalDate admissionDate;
     private LocalDate outpatientDate;
     private Double temperature;
+    private String diagnosis;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
     private List<Complaint> complaints;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
@@ -232,5 +233,13 @@ public class RespiratoryIllnessCase {
 
     public void setVoided(Boolean voided) {
         this.voided = voided;
+    }
+
+    public String getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis = diagnosis;
     }
 }

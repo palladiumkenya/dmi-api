@@ -31,6 +31,7 @@ public class IllnessCaseDto {
     private String sex;
     private String address;
     private Double temperature;
+    private String diagnosis;
     private Boolean voided;
     private List<ComplaintDto> complaintDtoList = new ArrayList<>();
     private List<LabDto> labDtoList = new ArrayList<>();
@@ -216,5 +217,13 @@ public class IllnessCaseDto {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis = diagnosis;
     }
 }

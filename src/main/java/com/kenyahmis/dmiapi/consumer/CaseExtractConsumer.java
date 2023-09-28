@@ -129,6 +129,7 @@ public class CaseExtractConsumer {
                 respiratoryIllnessCase.setAdmissionDate(m.getAdmissionDate());
                 respiratoryIllnessCase.setOutpatientDate(m.getOutpatientDate());
                 respiratoryIllnessCase.setTemperature(m.getTemperature());
+                respiratoryIllnessCase.setDiagnosis(m.getDiagnosis());
                 respiratoryIllnessCase.setCounty(m.getCounty());
                 respiratoryIllnessCase.setSubCounty(m.getSubCounty());
                 respiratoryIllnessCase.setCreatedAt(m.getCreatedAt());
@@ -155,6 +156,7 @@ public class CaseExtractConsumer {
                 respiratoryIllnessCase.setAddress(m.getAddress());
                 respiratoryIllnessCase.setAdmissionDate(m.getAdmissionDate());
                 respiratoryIllnessCase.setOutpatientDate(m.getOutpatientDate());
+                respiratoryIllnessCase.setDiagnosis(m.getDiagnosis());
                 respiratoryIllnessCase.setTemperature(m.getTemperature());
                 respiratoryIllnessCase.setCounty(m.getCounty());
                 respiratoryIllnessCase.setSubCounty(m.getSubCounty());
