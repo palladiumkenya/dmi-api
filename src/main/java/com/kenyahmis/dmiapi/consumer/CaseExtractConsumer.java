@@ -1,13 +1,12 @@
 package com.kenyahmis.dmiapi.consumer;
 
-import com.kenyahmis.dmiapi.dto.CaseMessageDto;
-import com.kenyahmis.dmiapi.dto.ComplaintDto;
-import com.kenyahmis.dmiapi.dto.LabDto;
+import com.kenyahmis.dmiapi.dto.*;
 import com.kenyahmis.dmiapi.model.Complaint;
+import com.kenyahmis.dmiapi.model.Diagnosis;
 import com.kenyahmis.dmiapi.model.Lab;
 import com.kenyahmis.dmiapi.model.RespiratoryIllnessCase;
-import com.kenyahmis.dmiapi.dto.IllnessCaseDto;
 import com.kenyahmis.dmiapi.repository.ComplaintRepository;
+import com.kenyahmis.dmiapi.repository.DiagnosisRepository;
 import com.kenyahmis.dmiapi.repository.LabRepository;
 import com.kenyahmis.dmiapi.repository.RespiratoryIllnessCaseRepository;
 import org.slf4j.Logger;
@@ -25,12 +24,15 @@ public class CaseExtractConsumer {
     private final RespiratoryIllnessCaseRepository caseRepository;
     private final LabRepository labRepository;
     private final ComplaintRepository complaintRepository;
+    private final DiagnosisRepository diagnosisRepository;
     private final Logger LOGGER = LoggerFactory.getLogger(CaseExtractConsumer.class);
 
-    public CaseExtractConsumer(RespiratoryIllnessCaseRepository caseRepository, LabRepository labRepository, ComplaintRepository complaintRepository) {
+    public CaseExtractConsumer(RespiratoryIllnessCaseRepository caseRepository, LabRepository labRepository,
+                               ComplaintRepository complaintRepository, DiagnosisRepository diagnosisRepository) {
         this.caseRepository = caseRepository;
         this.labRepository = labRepository;
         this.complaintRepository = complaintRepository;
+        this.diagnosisRepository = diagnosisRepository;
     }
 
     private List<Lab> mapLabDtoToLab(List<LabDto> labDtoList, RespiratoryIllnessCase illnessCase)  {
@@ -60,6 +62,20 @@ public class CaseExtractConsumer {
             complaintList.add(complaint);
         });
         return complaintList;
+    }
+
+    private List<Diagnosis> mapDiagnosisDtoToDiagnosis(List<DiagnosisDto> diagnosisDtoList, RespiratoryIllnessCase illnessCase) {
+        List<Diagnosis> diagnosisList = new ArrayList<>();
+        diagnosisDtoList.forEach(diagnosisDto -> {
+            Diagnosis diagnosis = new Diagnosis();
+            diagnosis.setDiagnosisId(diagnosisDto.getDiagnosisId());
+            diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
+            diagnosis.setDiagnosisDate(diagnosisDto.getDiagnosisDate());
+            diagnosis.setVoided(diagnosisDto.getVoided());
+            diagnosis.setCaseId(illnessCase.getId());
+            diagnosisList.add(diagnosis);
+        });
+        return diagnosisList;
     }
     private void updateLabs(List<LabDto> labDtoList, RespiratoryIllnessCase illnessCase) {
         List<Lab> labList = new ArrayList<>();
@@ -109,6 +125,29 @@ public class CaseExtractConsumer {
         complaintRepository.saveAll(complaintList);
     }
 
+    private void updateDiagnosis(List<DiagnosisDto> diagnosisDtoList, RespiratoryIllnessCase illnessCase) {
+        List<Diagnosis> diagnosisList = new ArrayList<>();
+        diagnosisDtoList.forEach(diagnosisDto -> {
+            Optional<Diagnosis> optionalDiagnosis = diagnosisRepository.findByCaseIdAndDiagnosisId(illnessCase.getId(), diagnosisDto.getDiagnosisId());
+            if (optionalDiagnosis.isPresent()){
+                Diagnosis diagnosis = optionalDiagnosis.get();
+                diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
+                diagnosis.setDiagnosisDate(diagnosisDto.getDiagnosisDate());
+                diagnosis.setVoided(diagnosisDto.getVoided());
+                diagnosisList.add(diagnosis);
+            }else {
+                Diagnosis diagnosis = new Diagnosis();
+                diagnosis.setDiagnosisId(diagnosisDto.getDiagnosisId());
+                diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
+                diagnosis.setDiagnosisDate(diagnosisDto.getDiagnosisDate());
+                diagnosis.setVoided(diagnosisDto.getVoided());
+                diagnosis.setCaseId(illnessCase.getId());
+                diagnosisList.add(diagnosis);
+            }
+        });
+        diagnosisRepository.saveAll(diagnosisList);
+    }
+
     @KafkaListener(id = "visitListener", topics = "visitTopic", containerFactory = "kafkaListenerContainerFactory")
     public void listenToMessage(List<CaseMessageDto> messages) {
         messages.forEach(caseMessageDto -> {
@@ -123,13 +162,11 @@ public class CaseExtractConsumer {
                 respiratoryIllnessCase.setNupi(m.getNupi());
                 respiratoryIllnessCase.setVisitUniqueId(m.getCaseUniqueId());
                 respiratoryIllnessCase.setMflCode(m.getHospitalIdNumber());
-                respiratoryIllnessCase.setVerbalConsentingDone(m.getVerbalConsentDone());
                 respiratoryIllnessCase.setDateOfBirth(m.getDateOfBirth());
                 respiratoryIllnessCase.setAddress(m.getAddress());
                 respiratoryIllnessCase.setAdmissionDate(m.getAdmissionDate());
                 respiratoryIllnessCase.setOutpatientDate(m.getOutpatientDate());
                 respiratoryIllnessCase.setTemperature(m.getTemperature());
-                respiratoryIllnessCase.setDiagnosis(m.getDiagnosis());
                 respiratoryIllnessCase.setCounty(m.getCounty());
                 respiratoryIllnessCase.setSubCounty(m.getSubCounty());
                 respiratoryIllnessCase.setCreatedAt(m.getCreatedAt());
@@ -142,6 +179,9 @@ public class CaseExtractConsumer {
 
                 // update labs
                 updateLabs(m.getLabDtoList(), respiratoryIllnessCase);
+
+                //update diagnosis
+                updateDiagnosis(m.getDiagnosis(), respiratoryIllnessCase);
             } else {
                 // created new case
                 respiratoryIllnessCase = new RespiratoryIllnessCase();
@@ -151,12 +191,10 @@ public class CaseExtractConsumer {
                 respiratoryIllnessCase.setVisitUniqueId(m.getCaseUniqueId());
                 respiratoryIllnessCase.setMflCode(m.getHospitalIdNumber());
                 respiratoryIllnessCase.setInterviewDate(m.getInterviewDate());
-                respiratoryIllnessCase.setVerbalConsentingDone(m.getVerbalConsentDone());
                 respiratoryIllnessCase.setDateOfBirth(m.getDateOfBirth());
                 respiratoryIllnessCase.setAddress(m.getAddress());
                 respiratoryIllnessCase.setAdmissionDate(m.getAdmissionDate());
                 respiratoryIllnessCase.setOutpatientDate(m.getOutpatientDate());
-                respiratoryIllnessCase.setDiagnosis(m.getDiagnosis());
                 respiratoryIllnessCase.setTemperature(m.getTemperature());
                 respiratoryIllnessCase.setCounty(m.getCounty());
                 respiratoryIllnessCase.setSubCounty(m.getSubCounty());
@@ -167,9 +205,8 @@ public class CaseExtractConsumer {
                 caseRepository.save(respiratoryIllnessCase);
                 labRepository.saveAll(mapLabDtoToLab(m.getLabDtoList(), respiratoryIllnessCase));
                 complaintRepository.saveAll(mapComplaintDtoToComplaint(m.getComplaintDtoList(), respiratoryIllnessCase));
+                diagnosisRepository.saveAll(mapDiagnosisDtoToDiagnosis(m.getDiagnosis(), respiratoryIllnessCase));
             }
-
-            LOGGER.info("Consumed message is: {}", m.toString());
         });
     }
 

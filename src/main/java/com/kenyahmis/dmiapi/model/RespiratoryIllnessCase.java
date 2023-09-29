@@ -29,11 +29,12 @@ public class RespiratoryIllnessCase {
     private LocalDate admissionDate;
     private LocalDate outpatientDate;
     private Double temperature;
-    private String diagnosis;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
     private List<Complaint> complaints;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
     private List<Lab> labs;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
+    private List<Diagnosis> diagnosis;
     private String county;
     private String subCounty;
     private LocalDateTime createdAt;
@@ -235,11 +236,7 @@ public class RespiratoryIllnessCase {
         this.voided = voided;
     }
 
-    public String getDiagnosis() {
-        return diagnosis;
-    }
-
-    public void setDiagnosis(String diagnosis) {
+    public void setDiagnosis(List<Diagnosis> diagnosis) {
         this.diagnosis = diagnosis;
     }
 }

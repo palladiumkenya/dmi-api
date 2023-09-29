@@ -1,9 +1,13 @@
 package com.kenyahmis.dmiapi.dto;
 
+import jakarta.validation.constraints.NotEmpty;
+
 import java.time.LocalDate;
 
 public class ComplaintDto {
+    @NotEmpty
     private String complaintId;
+    @NotEmpty
     private String complaint;
     private Boolean voided = false;
     private LocalDate onsetDate;

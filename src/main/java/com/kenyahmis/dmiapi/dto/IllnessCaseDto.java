@@ -24,17 +24,16 @@ public class IllnessCaseDto {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime interviewDate;
-    private Boolean verbalConsentDone;
     private LocalDate dateOfBirth;
     private Integer ageInMonths;
     private Integer ageInYears;
     private String sex;
     private String address;
     private Double temperature;
-    private String diagnosis;
     private Boolean voided;
     private List<ComplaintDto> complaintDtoList = new ArrayList<>();
     private List<LabDto> labDtoList = new ArrayList<>();
+    private List<DiagnosisDto> diagnosis = new ArrayList<>();
     private LocalDate admissionDate;
     private LocalDate outpatientDate;
     private String county;
@@ -89,14 +88,6 @@ public class IllnessCaseDto {
 
     public void setInterviewDate(LocalDateTime interviewDate) {
         this.interviewDate = interviewDate;
-    }
-
-    public Boolean getVerbalConsentDone() {
-        return verbalConsentDone;
-    }
-
-    public void setVerbalConsentDone(Boolean verbalConsentDone) {
-        this.verbalConsentDone = verbalConsentDone;
     }
 
     public LocalDate getDateOfBirth() {
@@ -219,11 +210,11 @@ public class IllnessCaseDto {
         this.updatedAt = updatedAt;
     }
 
-    public String getDiagnosis() {
+    public List<DiagnosisDto> getDiagnosis() {
         return diagnosis;
     }
 
-    public void setDiagnosis(String diagnosis) {
+    public void setDiagnosis(List<DiagnosisDto> diagnosis) {
         this.diagnosis = diagnosis;
     }
 }
