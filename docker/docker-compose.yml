@@ -38,6 +38,7 @@ services:
     environment:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    restart: unless-stopped
     command: "start --hostname-strict=false --proxy edge --db ${KC_DB_VENDOR} --db-url-host ${KC_DB_HOST} \
      --db-username ${KC_DB_USER} --db-password ${KC_DB_PASSWORD}"
   kafka-01:
