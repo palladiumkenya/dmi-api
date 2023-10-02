@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import java.time.LocalDate;
@@ -43,7 +44,9 @@ public class IllnessCaseDto {
     private List<DiagnosisDto> diagnosis = new ArrayList<>();
     private LocalDate admissionDate;
     private LocalDate outpatientDate;
+    @NotBlank
     private String county;
+    @NotBlank
     private String subCounty;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
