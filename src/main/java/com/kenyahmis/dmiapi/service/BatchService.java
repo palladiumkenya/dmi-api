@@ -35,7 +35,7 @@ public class BatchService {
     }
 
     public BatchOperation createBatchOperation(String externalRefId, Integer totalCases, String siteCode) {
-        Optional<BatchOperation> optionalBatchOperation = batchOperationsRepository.findByExternalReferenceIdAndSiteCode(externalRefId, siteCode);
+        Optional<BatchOperation> optionalBatchOperation = batchOperationsRepository.findByExternalReferenceIdAndMflCode(externalRefId, siteCode);
         BatchOperation batchOperation;
         if (optionalBatchOperation.isEmpty()) {
             BatchOperation batch = new BatchOperation(externalRefId, totalCases, siteCode, "INCOMPLETE", LocalDateTime.now());

@@ -16,6 +16,6 @@ public interface BatchOperationsRepository extends JpaRepository<BatchOperation,
             where b.id = ?1""", nativeQuery = true)
     List<Object[]> findByRefId(UUID refId);
 
-    Optional<BatchOperation> findByExternalReferenceIdAndSiteCode(String externalReferenceId, String siteCode);
+    Optional<BatchOperation> findByExternalReferenceIdAndMflCode(String externalReferenceId, String mlfCode);
 
 }
