@@ -5,12 +5,8 @@ import com.kenyahmis.dmiapi.model.APIResponse;
 import com.kenyahmis.dmiapi.model.BatchOperation;
 import com.kenyahmis.dmiapi.service.BatchService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
@@ -23,9 +19,10 @@ public class BatchController {
         this.batchService = batchService;
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/batch/{batchId}")
-    private ResponseEntity<APIResponse<BatchOperation>> getBatchOperation(@PathVariable UUID batchId) throws ResourceNotFoundException {
+    private APIResponse<BatchOperation> getBatchOperation(@PathVariable UUID batchId) throws ResourceNotFoundException {
         BatchOperation batchOperation = batchService.getBatchOperation(batchId);
-        return new ResponseEntity<>(new APIResponse<>(batchOperation, "Success"), HttpStatus.OK);
+        return new APIResponse<>(batchOperation, "Success");
     }
 }
