@@ -86,7 +86,8 @@ public class DmiApiApplication {
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TYPE_MAPPINGS, "respiratoryIllnessCase:com.kenyahmis.dmiapi.dto.CaseMessageDto");
+        props.put(JsonDeserializer.TYPE_MAPPINGS, "caseMessage:com.kenyahmis.dmiapi.dto.CaseMessageDto," +
+                "illnessRequest:com.kenyahmis.dmiapi.dto.IllnessRequest");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         return props;
     }

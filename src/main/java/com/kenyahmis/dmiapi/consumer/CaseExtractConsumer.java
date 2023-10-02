@@ -8,29 +8,30 @@ import com.kenyahmis.dmiapi.model.RespiratoryIllnessCase;
 import com.kenyahmis.dmiapi.repository.ComplaintRepository;
 import com.kenyahmis.dmiapi.repository.DiagnosisRepository;
 import com.kenyahmis.dmiapi.repository.LabRepository;
-import com.kenyahmis.dmiapi.repository.RespiratoryIllnessCaseRepository;
+import com.kenyahmis.dmiapi.repository.IllnessCaseRepository;
+import com.kenyahmis.dmiapi.service.BatchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CaseExtractConsumer {
 
-    private final RespiratoryIllnessCaseRepository caseRepository;
+    private final IllnessCaseRepository caseRepository;
     private final LabRepository labRepository;
     private final ComplaintRepository complaintRepository;
     private final DiagnosisRepository diagnosisRepository;
+    private final BatchService batchService;
     private final Logger LOGGER = LoggerFactory.getLogger(CaseExtractConsumer.class);
 
-    public CaseExtractConsumer(RespiratoryIllnessCaseRepository caseRepository, LabRepository labRepository,
+    public CaseExtractConsumer(IllnessCaseRepository caseRepository, LabRepository labRepository, BatchService batchService,
                                ComplaintRepository complaintRepository, DiagnosisRepository diagnosisRepository) {
         this.caseRepository = caseRepository;
         this.labRepository = labRepository;
+        this.batchService = batchService;
         this.complaintRepository = complaintRepository;
         this.diagnosisRepository = diagnosisRepository;
     }
@@ -150,6 +151,7 @@ public class CaseExtractConsumer {
 
     @KafkaListener(id = "visitListener", topics = "visitTopic", containerFactory = "kafkaListenerContainerFactory")
     public void listenToMessage(List<CaseMessageDto> messages) {
+        Set<UUID> batchIdList = new HashSet<>();
         messages.forEach(caseMessageDto -> {
             IllnessCaseDto m = caseMessageDto.getIllnessCaseDto();
             Optional<RespiratoryIllnessCase>  optionalRespiratoryIllnessCase = caseRepository.findByVisitUniqueIdAndMflCode(m.getCaseUniqueId(), m.getHospitalIdNumber());
@@ -207,7 +209,9 @@ public class CaseExtractConsumer {
                 complaintRepository.saveAll(mapComplaintDtoToComplaint(m.getComplaintDtoList(), respiratoryIllnessCase));
                 diagnosisRepository.saveAll(mapDiagnosisDtoToDiagnosis(m.getDiagnosis(), respiratoryIllnessCase));
             }
+            batchIdList.add(caseMessageDto.getBatchId());
         });
+        batchIdList.forEach(batchService::updateBatchOperation);
     }
 
 }
