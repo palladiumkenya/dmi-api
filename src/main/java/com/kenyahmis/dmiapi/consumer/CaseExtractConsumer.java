@@ -42,7 +42,8 @@ public class CaseExtractConsumer {
             Lab lab = new Lab();
             lab.setLabDate(labDto.getLabDate());
             lab.setOrderId(labDto.getOrderId());
-            lab.setResult(labDto.getResult());
+            lab.setTestName(labDto.getTestName());
+            lab.setTestResult(labDto.getTestResult());
             lab.setVoided(labDto.getVoided());
             lab.setCaseId(illnessCase.getId());
             labList.add(lab);
@@ -84,7 +85,8 @@ public class CaseExtractConsumer {
             Optional<Lab> optionalLab = labRepository.findByCaseIdAndOrderId(illnessCase.getId(), labDto.getOrderId());
             if (optionalLab.isPresent()){
                 Lab lab = optionalLab.get();
-                lab.setResult(labDto.getResult());
+                lab.setTestResult(labDto.getTestResult());
+                lab.setTestName(lab.getTestName());
                 lab.setLabDate(labDto.getLabDate());
                 lab.setVoided(labDto.getVoided());
                 labList.add(lab);
@@ -92,7 +94,8 @@ public class CaseExtractConsumer {
                 Lab lab = new Lab();
                 lab.setLabDate(labDto.getLabDate());
                 lab.setOrderId(labDto.getOrderId());
-                lab.setResult(labDto.getResult());
+                lab.setTestName(labDto.getTestName());
+                lab.setTestResult(labDto.getTestResult());
                 lab.setVoided(labDto.getVoided());
                 lab.setCaseId(illnessCase.getId());
                 labList.add(lab);

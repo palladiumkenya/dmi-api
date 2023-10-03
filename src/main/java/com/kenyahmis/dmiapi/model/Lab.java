@@ -1,10 +1,12 @@
 package com.kenyahmis.dmiapi.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Data
 @Entity
 @Table(name = "lab")
 public class Lab {
@@ -18,66 +20,10 @@ public class Lab {
     @Column(name = "case_id")
     private UUID caseId;
     private String orderId;
-    private String result;
+    private String testName;
+    private String testResult;
     private LocalDateTime labDate;
     private Boolean voided;
 
-    public Lab() {
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public RespiratoryIllnessCase getIllnessCase() {
-        return illnessCase;
-    }
-
-    public void setIllnessCase(RespiratoryIllnessCase illnessCase) {
-        this.illnessCase = illnessCase;
-    }
-
-    public UUID getCaseId() {
-        return caseId;
-    }
-
-    public void setCaseId(UUID caseId) {
-        this.caseId = caseId;
-    }
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
-
-    public LocalDateTime getLabDate() {
-        return labDate;
-    }
-
-    public void setLabDate(LocalDateTime labDate) {
-        this.labDate = labDate;
-    }
-
-    public Boolean getVoided() {
-        return voided;
-    }
-
-    public void setVoided(Boolean voided) {
-        this.voided = voided;
-    }
+    public Lab() { }
 }
