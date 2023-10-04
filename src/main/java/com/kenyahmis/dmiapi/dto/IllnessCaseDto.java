@@ -17,13 +17,12 @@ import java.util.List;
 @Data
 public class IllnessCaseDto {
 
-    @NotEmpty
-    private String patientUniqueId;
     @NotBlank
+    private String patientUniqueId;
     private String nupi;
-    @NotEmpty
+    @NotBlank
     private String caseUniqueId;
-    @NotEmpty
+    @NotBlank
     private String hospitalIdNumber;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -32,7 +31,7 @@ public class IllnessCaseDto {
     private LocalDate dateOfBirth;
     private Integer ageInMonths;
     private Integer ageInYears;
-    @NotEmpty
+    @NotBlank
     private String sex;
     private String address;
     private Double temperature;
