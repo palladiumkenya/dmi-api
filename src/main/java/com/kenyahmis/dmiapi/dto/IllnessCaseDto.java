@@ -16,9 +16,10 @@ import java.util.List;
 
 @Data
 public class IllnessCaseDto {
+
     @NotEmpty
     private String patientUniqueId;
-    @NotEmpty
+    @NotBlank
     private String nupi;
     @NotEmpty
     private String caseUniqueId;

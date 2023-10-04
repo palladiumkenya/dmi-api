@@ -8,7 +8,6 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -55,7 +54,7 @@ public class BatchService {
             BatchOperation batchOperation = optionalBatchOperation.get();
             Integer caseCount = illnessCaseRepository.countByBatchId(batchOperation.getId());
             batchOperation.setProcessedCount(caseCount);
-            if (caseCount.equals(batchOperation.getInputCount())) {
+            if (caseCount.equals(batchOperation.getInputCount()) || caseCount > batchOperation.getInputCount()) {
                 batchOperation.setStatus("COMPLETE");
                 batchOperation.setCompleteTime(LocalDateTime.now());
             }
