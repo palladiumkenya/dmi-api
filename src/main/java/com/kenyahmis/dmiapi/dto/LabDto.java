@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
@@ -12,11 +13,11 @@ import java.time.LocalDateTime;
 
 @Data
 public class LabDto {
-    @NotEmpty
+    @NotBlank
     private String orderId;
-    @NotEmpty
+    @NotBlank
     private String testName;
-    @NotEmpty
+    @NotBlank
     private String testResult;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
