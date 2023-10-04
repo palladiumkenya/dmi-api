@@ -191,6 +191,7 @@ public class CaseExtractConsumer {
                 // created new case
                 respiratoryIllnessCase = new RespiratoryIllnessCase();
                 respiratoryIllnessCase.setBatchId(caseMessageDto.getBatchId());
+                respiratoryIllnessCase.setEmr(caseMessageDto.getEmr());
                 respiratoryIllnessCase.setPatientUniqueId(m.getPatientUniqueId());
                 respiratoryIllnessCase.setNupi(m.getNupi());
                 respiratoryIllnessCase.setVisitUniqueId(m.getCaseUniqueId());
