@@ -6,10 +6,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Data
 public class DiagnosisDto {
 
     @NotBlank
@@ -22,38 +23,6 @@ public class DiagnosisDto {
     private String diagnosis;
     private Boolean voided = false;
 
-    public DiagnosisDto() {
-    }
+    public DiagnosisDto() {}
 
-    public String getDiagnosisId() {
-        return diagnosisId;
-    }
-
-    public void setDiagnosisId(String diagnosisId) {
-        this.diagnosisId = diagnosisId;
-    }
-
-    public LocalDateTime getDiagnosisDate() {
-        return diagnosisDate;
-    }
-
-    public void setDiagnosisDate(LocalDateTime diagnosisDate) {
-        this.diagnosisDate = diagnosisDate;
-    }
-
-    public String getDiagnosis() {
-        return diagnosis;
-    }
-
-    public void setDiagnosis(String diagnosis) {
-        this.diagnosis = diagnosis;
-    }
-
-    public Boolean getVoided() {
-        return voided;
-    }
-
-    public void setVoided(Boolean voided) {
-        this.voided = voided;
-    }
 }

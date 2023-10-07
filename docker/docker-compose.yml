@@ -57,3 +57,16 @@ services:
       KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka-01:9092,EXTERNAL://172.17.0.1:9094
       KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka-01:9093
       ALLOW_PLAINTEXT_LISTENER: 'yes'
+  dmi-metabase:
+    container_name: metabase_container
+    image: metabase/metabase:v0.47.0
+    environment:
+      - MB_DB_TYPE=postgres
+      - MB_DB_DBNAME=${MB_DB_DBNAME}
+      - MB_DB_PORT=5432
+      - MB_DB_USER=${MB_DB_USER}
+      - MB_DB_PASS=${MB_DB_PASS}
+      - MB_DB_HOST=${MB_DB_HOST}
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
