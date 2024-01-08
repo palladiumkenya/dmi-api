@@ -68,5 +68,5 @@ services:
       - MB_DB_PASS=${MB_DB_PASS}
       - MB_DB_HOST=${MB_DB_HOST}
     ports:
-      - "3000:3000"
+      - "4000:3000"
     restart: unless-stopped
