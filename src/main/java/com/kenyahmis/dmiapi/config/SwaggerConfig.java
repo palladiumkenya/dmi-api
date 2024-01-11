@@ -14,14 +14,16 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
     private static final String OAUTH_SCHEME = "auth";
     @Value("${spring.security.oauth2.authorizationserver.endpoint.token-uri}")
-    String authURL;
+    private String authURL;
+    @Value("${springdoc.swagger-ui.server.url}")
+    private String serverURL;
     @Bean
     public OpenAPI myOpenAPI() {
         Info info = new Info()
                 .title("DMI API")
                 .version("1.0");
         return new OpenAPI()
-                .addServersItem(new Server().url("https://dmistaging.kenyahmis.org"))
+                .addServersItem(new Server().url(serverURL))
                 .addSecurityItem(
                         new SecurityRequirement()
                                 .addList(OAUTH_SCHEME)
@@ -38,7 +40,6 @@ public class SwaggerConfig {
 //                .type(SecurityScheme.Type.HTTP)
 //                .scheme("bearer")
 //                .bearerFormat("JWT");
-
     }
 
     private OAuthFlows createOAuthFlows() {

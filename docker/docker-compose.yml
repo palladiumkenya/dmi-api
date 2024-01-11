@@ -19,6 +19,7 @@ services:
       KEYCLOAK_ISSUER_URL: ${KEYCLOAK_ISSUER_URL}
       KEYCLOAK_JWT_CERT_URL: ${KEYCLOAK_JWT_CERT_URL}
       KEYCLOAK_TOKEN_URL: ${KEYCLOAK_TOKEN_URL}
+      SPRING_DOC_SERVER_URL: ${SPRING_DOC_SERVER_URL}
   dmi-postgres:
     container_name: postgres_container
     image: postgres:11-bullseye
