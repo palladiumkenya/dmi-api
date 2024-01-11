@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ public class SwaggerConfig {
                 .title("DMI API")
                 .version("1.0");
         return new OpenAPI()
+                .addServersItem(new Server().url("https://dmistaging.kenyahmis.org"))
                 .addSecurityItem(
                         new SecurityRequirement()
                                 .addList(OAUTH_SCHEME)
@@ -31,11 +33,11 @@ public class SwaggerConfig {
 
     private SecurityScheme createOAuthScheme() {
         return new SecurityScheme()
-//                .type(SecurityScheme.Type.OAUTH2)
-//                .flows(createOAuthFlows());
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT");
+                .type(SecurityScheme.Type.OAUTH2)
+                .flows(createOAuthFlows());
+//                .type(SecurityScheme.Type.HTTP)
+//                .scheme("bearer")
+//                .bearerFormat("JWT");
 
     }
 
