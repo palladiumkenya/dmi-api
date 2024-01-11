@@ -37,9 +37,6 @@ public class SwaggerConfig {
         return new SecurityScheme()
                 .type(SecurityScheme.Type.OAUTH2)
                 .flows(createOAuthFlows());
-//                .type(SecurityScheme.Type.HTTP)
-//                .scheme("bearer")
-//                .bearerFormat("JWT");
     }
 
     private OAuthFlows createOAuthFlows() {
