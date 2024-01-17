@@ -1,0 +1,11 @@
+ALTER TABLE public.illness_case DROP COLUMN IF EXISTS nupi,
+                                DROP COLUMN IF EXISTS patient_unique_id,
+                                DROP COLUMN IF EXISTS date_of_birth,
+                                DROP COLUMN IF EXISTS age_in_months,
+                                DROP COLUMN IF EXISTS age_in_years,
+                                DROP COLUMN IF EXISTS sex,
+                                DROP COLUMN IF EXISTS address,
+                                DROP COLUMN IF EXISTS temperature,
+                                DROP COLUMN IF EXISTS county,
+                                DROP COLUMN IF EXISTS sub_county,
+                                DROP COLUMN IF EXISTS voided;

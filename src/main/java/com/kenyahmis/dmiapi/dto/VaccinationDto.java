@@ -11,5 +11,5 @@ public class VaccinationDto {
     private String vaccination;
     private Integer doses;
     private Boolean verified;
-    private Boolean voided;
+    private Boolean voided = false;
 }

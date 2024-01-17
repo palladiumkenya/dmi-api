@@ -10,5 +10,5 @@ public class VitalSignsDto {
     private Integer respiratoryRate;
     private Integer oxygenSaturation;
     private String oxygenSaturationMode;
-    private Boolean voided;
+    private Boolean voided = false;
 }

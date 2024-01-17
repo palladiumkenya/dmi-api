@@ -22,10 +22,8 @@ public class Case {
     private String mflCode;
     private String emr;
     private LocalDateTime interviewDate;
-    private LocalDate dateOfBirth;
     private LocalDate admissionDate;
     private LocalDate outpatientDate;
-    private Double temperature;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
     private List<Complaint> complaints;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
@@ -35,6 +33,5 @@ public class Case {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime loadDate;
-    private Boolean voided;
     public Case() {}
 }

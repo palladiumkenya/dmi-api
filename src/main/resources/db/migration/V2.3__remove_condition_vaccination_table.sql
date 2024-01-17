@@ -1,0 +1,1 @@
+ALTER TABLE public.vaccination DROP COLUMN IF EXISTS condition;

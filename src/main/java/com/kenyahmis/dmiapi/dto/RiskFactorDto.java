@@ -9,5 +9,5 @@ public class RiskFactorDto {
     private String riskFactorId;
     @NotBlank
     private String condition;
-    private Boolean voided;
+    private Boolean voided = false;
 }

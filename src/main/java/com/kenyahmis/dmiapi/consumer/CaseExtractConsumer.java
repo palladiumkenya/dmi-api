@@ -116,7 +116,7 @@ public class CaseExtractConsumer {
             Complaint complaint = new Complaint();
             complaint.setComplaintId(complaintDto.getComplaintId());
             complaint.setComplaint(complaintDto.getComplaint());
-            complaint.setOnsetDate(complaintDto.getOnsetDate());
+            complaint.setOnsetDate(complaintDto.getOnsetDate().toLocalDate());
             complaint.setDuration(complaintDto.getDuration());
             complaint.setVoided(complaintDto.getVoided());
             complaint.setCaseId(illnessCase.getId());
@@ -253,7 +253,7 @@ public class CaseExtractConsumer {
             if (optionalLab.isPresent()){
                 complaint = optionalLab.get();
                 complaint.setComplaint(complaintDto.getComplaint());
-                complaint.setOnsetDate(complaintDto.getOnsetDate());
+                complaint.setOnsetDate(complaintDto.getOnsetDate().toLocalDate());
                 complaint.setVoided(complaintDto.getVoided());
                 complaint.setDuration(complaintDto.getDuration());
             }else {
@@ -261,7 +261,7 @@ public class CaseExtractConsumer {
                 complaint.setComplaintId(complaintDto.getComplaintId());
                 complaint.setComplaint(complaintDto.getComplaint());
                 complaint.setCaseId(illnessCase.getId());
-                complaint.setOnsetDate(complaintDto.getOnsetDate());
+                complaint.setOnsetDate(complaintDto.getOnsetDate().toLocalDate());
                 complaint.setDuration(complaintDto.getDuration());
                 complaint.setVoided(complaintDto.getVoided());
             }
