@@ -345,7 +345,7 @@ public class CaseExtractConsumer {
                 aCase.setEmr(caseMessageDto.getEmr());
                 aCase.setStatus(m.getStatus());
                 aCase.setFinalOutcome(m.getFinalOutcome());
-                aCase.setFinalOutcomeDate(LocalDateTime.parse(m.getFinalOutcomeDate()));
+                aCase.setFinalOutcomeDate(LocalDateTime.parse(m.getFinalOutcomeDate(), formatter));
                 aCase.setVisitUniqueId(m.getCaseUniqueId());
                 aCase.setMflCode(m.getHospitalIdNumber());
                 aCase.setCreatedAt(m.getCreatedAt());
