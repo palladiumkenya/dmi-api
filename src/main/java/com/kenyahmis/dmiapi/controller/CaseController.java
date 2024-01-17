@@ -39,14 +39,14 @@ public class CaseController {
         this.batchService = batchService;
     }
 
-    @PostMapping(value = "/case")
-    private ResponseEntity<?> addCase(@RequestBody @Valid IllnessRequest request, @AuthenticationPrincipal Jwt jwt) {
-        // Create Batch Entry
-        BatchOperation batch = batchService.createBatchOperation(request.getBatchId(), request.getTotalCases(), request.getMflCode());
-//        LOGGER.info("Working with request from {}", jwt.getClaimAsString("emr"));
-        request.getCases().forEach(r -> kafkaTemplate.send("visitTopic", new CaseMessageDto(batch.getId(), r,  jwt.getClaimAsString("emr"))));
-        return new ResponseEntity<>(new BatchAPIResponse("Success", batch.getId().toString()), HttpStatus.OK);
-    }
+//    @PostMapping(value = "/case")
+//    private ResponseEntity<?> addCase(@RequestBody @Valid IllnessRequest request, @AuthenticationPrincipal Jwt jwt) {
+//        // Create Batch Entry
+//        BatchOperation batch = batchService.createBatchOperation(request.getBatchId(), request.getTotalCases(), request.getMflCode());
+////        LOGGER.info("Working with request from {}", jwt.getClaimAsString("emr"));
+//        request.getCases().forEach(r -> kafkaTemplate.send("visitTopic", new CaseMessageDto(batch.getId(), r,  jwt.getClaimAsString("emr"))));
+//        return new ResponseEntity<>(new BatchAPIResponse("Success", batch.getId().toString()), HttpStatus.OK);
+//    }
 
     @PostMapping(value = "/case/batch")
     private ResponseEntity<?> addBatchCases(@RequestBody @Valid ValidList<CaseDto> request,
