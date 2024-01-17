@@ -2,7 +2,6 @@ package com.kenyahmis.dmiapi.controller;
 
 import com.kenyahmis.dmiapi.dto.CaseMessageDto;
 import com.kenyahmis.dmiapi.dto.CaseDto;
-import com.kenyahmis.dmiapi.dto.IllnessRequest;
 import com.kenyahmis.dmiapi.dto.ValidList;
 import com.kenyahmis.dmiapi.model.BatchAPIResponse;
 import com.kenyahmis.dmiapi.model.BatchOperation;

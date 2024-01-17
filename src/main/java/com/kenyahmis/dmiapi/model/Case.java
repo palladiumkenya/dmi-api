@@ -24,6 +24,9 @@ public class Case {
     private LocalDateTime interviewDate;
     private LocalDate admissionDate;
     private LocalDate outpatientDate;
+    private String status;
+    private String finalOutcome;
+    private LocalDateTime finalOutcomeDate;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
     private List<Complaint> complaints;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)

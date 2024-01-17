@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -296,6 +297,7 @@ public class CaseExtractConsumer {
     @KafkaListener(id = "visitListener", topics = "visitTopic", containerFactory = "kafkaListenerContainerFactory")
     public void listenToMessage(List<CaseMessageDto> messages) {
         Set<UUID> batchIdList = new HashSet<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         messages.forEach(caseMessageDto -> {
             CaseDto m = caseMessageDto.getCaseDto();
             Optional<Case>  optionalRespiratoryIllnessCase = caseRepository.findByVisitUniqueIdAndMflCode(m.getCaseUniqueId(), m.getHospitalIdNumber());
@@ -304,6 +306,9 @@ public class CaseExtractConsumer {
             if (optionalRespiratoryIllnessCase.isPresent()) {
                 // updated case
                 aCase = optionalRespiratoryIllnessCase.get();
+                aCase.setStatus(m.getStatus());
+                aCase.setFinalOutcome(m.getFinalOutcome());
+                aCase.setFinalOutcomeDate(LocalDateTime.parse(m.getFinalOutcomeDate(), formatter));
                 aCase.setVisitUniqueId(m.getCaseUniqueId());
                 aCase.setMflCode(m.getHospitalIdNumber());
                 aCase.setAdmissionDate(m.getAdmissionDate().toLocalDate());
@@ -338,6 +343,9 @@ public class CaseExtractConsumer {
                 aCase = new Case();
                 aCase.setBatchId(caseMessageDto.getBatchId());
                 aCase.setEmr(caseMessageDto.getEmr());
+                aCase.setStatus(m.getStatus());
+                aCase.setFinalOutcome(m.getFinalOutcome());
+                aCase.setFinalOutcomeDate(LocalDateTime.parse(m.getFinalOutcomeDate()));
                 aCase.setVisitUniqueId(m.getCaseUniqueId());
                 aCase.setMflCode(m.getHospitalIdNumber());
                 aCase.setCreatedAt(m.getCreatedAt());
