@@ -1,0 +1,1 @@
+ALTER TABLE public.vital_sign ADD COLUMN voided bool;

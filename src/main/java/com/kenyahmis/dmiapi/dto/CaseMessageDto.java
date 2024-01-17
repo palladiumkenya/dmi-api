@@ -8,13 +8,13 @@ import java.util.UUID;
 public class CaseMessageDto {
     private UUID batchId;
     private String emr;
-    private  IllnessCaseDto illnessCaseDto;
+    private CaseDto caseDto;
 
     public CaseMessageDto() {}
 
-    public CaseMessageDto(UUID batchId, IllnessCaseDto illnessCaseDto, String emr) {
+    public CaseMessageDto(UUID batchId, CaseDto caseDto, String emr) {
         this.batchId = batchId;
-        this.illnessCaseDto = illnessCaseDto;
+        this.caseDto = caseDto;
         this.emr = emr;
     }
 

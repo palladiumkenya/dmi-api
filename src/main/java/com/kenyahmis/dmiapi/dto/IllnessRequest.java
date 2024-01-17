@@ -18,9 +18,9 @@ public class IllnessRequest {
     @NotBlank
     private String mflCode;
     @Valid
-    private List<IllnessCaseDto> cases;
+    private List<CaseDto> cases;
 
-    public IllnessRequest(String batchId, Integer totalCases, @Valid List<IllnessCaseDto> cases) {
+    public IllnessRequest(String batchId, Integer totalCases, @Valid List<CaseDto> cases) {
         this.batchId = batchId;
         this.totalCases = totalCases;
         this.cases = cases;

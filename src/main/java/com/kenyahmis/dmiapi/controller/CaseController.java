@@ -1,7 +1,7 @@
 package com.kenyahmis.dmiapi.controller;
 
 import com.kenyahmis.dmiapi.dto.CaseMessageDto;
-import com.kenyahmis.dmiapi.dto.IllnessCaseDto;
+import com.kenyahmis.dmiapi.dto.CaseDto;
 import com.kenyahmis.dmiapi.dto.IllnessRequest;
 import com.kenyahmis.dmiapi.dto.ValidList;
 import com.kenyahmis.dmiapi.model.BatchAPIResponse;
@@ -49,7 +49,7 @@ public class CaseController {
     }
 
     @PostMapping(value = "/case/batch")
-    private ResponseEntity<?> addBatchCases(@RequestBody @Valid ValidList<IllnessCaseDto> request,
+    private ResponseEntity<?> addBatchCases(@RequestBody @Valid ValidList<CaseDto> request,
                                             @AuthenticationPrincipal Jwt jwt) {
         // Create Batch Entry
         BatchOperation batch = new BatchOperation(request.size(), "INCOMPLETE",

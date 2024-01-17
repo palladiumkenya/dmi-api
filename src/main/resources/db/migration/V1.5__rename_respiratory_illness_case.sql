@@ -1,0 +1,1 @@
+ALTER TABLE public.respiratory_illness_case RENAME TO illness_case;

@@ -14,7 +14,7 @@ public class Diagnosis {
     private UUID id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "case_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private RespiratoryIllnessCase illnessCase;
+    private Case illnessCase;
     @Column(name = "case_id")
     private UUID caseId;
     private String diagnosisId;
@@ -33,11 +33,11 @@ public class Diagnosis {
         this.id = id;
     }
 
-    public RespiratoryIllnessCase getIllnessCase() {
+    public Case getIllnessCase() {
         return illnessCase;
     }
 
-    public void setIllnessCase(RespiratoryIllnessCase illnessCase) {
+    public void setIllnessCase(Case illnessCase) {
         this.illnessCase = illnessCase;
     }
 

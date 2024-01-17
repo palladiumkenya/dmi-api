@@ -1,0 +1,2 @@
+ALTER TABLE public.illness_case DROP CONSTRAINT IF EXISTS fk_respiratory_illness_case_subject_id;
+ALTER TABLE public.illness_case ADD CONSTRAINT fk_illness_case_subject_id FOREIGN KEY (subject_id) REFERENCES public.subject(id);

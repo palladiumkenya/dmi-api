@@ -1,0 +1,1 @@
+ALTER TABLE public.subject ADD COLUMN date_of_birth timestamp;

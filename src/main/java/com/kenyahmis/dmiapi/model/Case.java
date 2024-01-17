@@ -6,28 +6,23 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
 @Data
 @Entity
-@Table(name = "respiratory_illness_case")
-public class RespiratoryIllnessCase {
+@Table(name = "illness_case")
+public class Case {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     @JoinColumn(name = "batchId", referencedColumnName = "id")
     private UUID batchId;
-    private String patientUniqueId;
-    private String nupi;
+    @JoinColumn(name = "subjectId", referencedColumnName = "id")
+    private UUID subjectId;
     private String visitUniqueId;
     private String mflCode;
     private String emr;
     private LocalDateTime interviewDate;
     private LocalDate dateOfBirth;
-    private Integer ageInMonths;
-    private Integer ageInYears;
-    private String sex;
-    private String address;
     private LocalDate admissionDate;
     private LocalDate outpatientDate;
     private Double temperature;
@@ -37,11 +32,9 @@ public class RespiratoryIllnessCase {
     private List<Lab> labs;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
     private List<Diagnosis> diagnosis;
-    private String county;
-    private String subCounty;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime loadDate;
     private Boolean voided;
-    public RespiratoryIllnessCase() {}
+    public Case() {}
 }

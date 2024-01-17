@@ -1,0 +1,1 @@
+ALTER TABLE public.risk_factor ADD COLUMN risk_factor_id varchar(100);

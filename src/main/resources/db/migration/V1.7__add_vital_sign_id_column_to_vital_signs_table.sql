@@ -1,0 +1,1 @@
+ALTER TABLE public.vital_sign ADD COLUMN vital_sign_id varchar(100);

@@ -1,0 +1,1 @@
+ALTER TABLE public.lab ADD COLUMN unit varchar(20), ADD COLUMN upper_limit varchar(20), ADD COLUMN lower_limit varchar(20);

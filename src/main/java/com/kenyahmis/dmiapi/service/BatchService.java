@@ -3,7 +3,7 @@ package com.kenyahmis.dmiapi.service;
 import com.kenyahmis.dmiapi.exception.ResourceNotFoundException;
 import com.kenyahmis.dmiapi.model.BatchOperation;
 import com.kenyahmis.dmiapi.repository.BatchOperationsRepository;
-import com.kenyahmis.dmiapi.repository.IllnessCaseRepository;
+import com.kenyahmis.dmiapi.repository.CaseRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,12 +17,12 @@ import java.util.UUID;
 public class BatchService {
 
     private final BatchOperationsRepository batchOperationsRepository;
-    private final IllnessCaseRepository illnessCaseRepository;
+    private final CaseRepository caseRepository;
     private final Logger LOGGER = LoggerFactory.getLogger(BatchService.class);
 
-    public BatchService(BatchOperationsRepository batchOperationsRepository, IllnessCaseRepository illnessCaseRepository) {
+    public BatchService(BatchOperationsRepository batchOperationsRepository, CaseRepository caseRepository) {
         this.batchOperationsRepository = batchOperationsRepository;
-        this.illnessCaseRepository = illnessCaseRepository;
+        this.caseRepository = caseRepository;
     }
 
     public BatchOperation getBatchOperation(UUID id) throws ResourceNotFoundException {
@@ -52,7 +52,7 @@ public class BatchService {
             LOGGER.error("Failed to update Batch operation:  {} not found", batchId);
         } else {
             BatchOperation batchOperation = optionalBatchOperation.get();
-            Integer caseCount = illnessCaseRepository.countByBatchId(batchOperation.getId());
+            Integer caseCount = caseRepository.countByBatchId(batchOperation.getId());
             batchOperation.setProcessedCount(caseCount);
             if (caseCount.equals(batchOperation.getInputCount()) || caseCount > batchOperation.getInputCount()) {
                 batchOperation.setStatus("COMPLETE");
