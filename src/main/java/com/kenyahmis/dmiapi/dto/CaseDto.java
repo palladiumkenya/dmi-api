@@ -34,6 +34,7 @@ public class CaseDto {
     @Schema(description = "Timestamp for when the subject was admitted", example = "2024-01-17 06:00:00")
     @ValidTimestamp
     private String admissionDate;
+    @Schema(example = "2024-01-17 06:00:00")
     @ValidTimestamp
     private String outpatientDate;
     @Schema(description = "A timestamp for when the case report was generated. This should be system generated", example = "2024-01-17 06:50:17")

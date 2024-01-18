@@ -7,12 +7,13 @@ import lombok.Data;
 @Data
 public class DiagnosisDto {
 
-    @Schema(description = "The diagnosis unique identifier within the submitting EMR")
+    @Schema(description = "The diagnosis unique identifier within the submitting EMR", example = "8643226")
     @NotBlank
     private String diagnosisId;
-    @Schema(description = "The timestamp for when the diagnosis was made")
+    @Schema(description = "The timestamp for when the diagnosis was made", example = "2024-01-15 06:09:03")
     @ValidTimestamp
     private String diagnosisDate;
+    @Schema(example = "Cholera")
     @NotBlank
     private String diagnosis;
     @Schema(description = "A global library of medical diagnosis terms", example = "ICD-10")

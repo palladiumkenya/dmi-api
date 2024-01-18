@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class RiskFactorDto {
-    @Schema(description = "The unique identifier for the risk factor/comorbidity")
+    @Schema(description = "The unique identifier for the risk factor/comorbidity", example = "99876")
     @NotBlank
     private String riskFactorId;
     @Schema(description = "The reported comorbidity", example = "Diabetes")
