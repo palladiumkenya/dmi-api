@@ -8,6 +8,9 @@ import java.util.List;
 public class ValidCaseStatusValidator implements ConstraintValidator<ValidCaseStatus, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return true;
+        }
         List<String> statusList = List.of("preliminary","final","amended" ,"entered-in-error");
         return statusList.contains(value);
     }

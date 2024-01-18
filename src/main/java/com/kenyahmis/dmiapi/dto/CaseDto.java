@@ -21,6 +21,7 @@ public class CaseDto {
     @NotBlank
     private String hospitalIdNumber;
     @Schema(description = "The status of the submitted case report. Options include preliminary | final | amended | entered-in-error", example = "final")
+    @NotBlank
     @ValidCaseStatus
     private String status;
     @Schema(description = "The final clinical outcome of the reported case. Options include: 'Discharge from hospital'," +
