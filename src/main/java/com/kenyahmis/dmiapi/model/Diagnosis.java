@@ -20,6 +20,8 @@ public class Diagnosis {
     private String diagnosisId;
     private LocalDateTime diagnosisDate;
     private String diagnosis;
+    private String system;
+    private String SystemCode;
     private Boolean voided;
 
     public Diagnosis() {
@@ -79,5 +81,21 @@ public class Diagnosis {
 
     public void setVoided(Boolean voided) {
         this.voided = voided;
+    }
+
+    public String getSystem() {
+        return system;
+    }
+
+    public void setSystem(String system) {
+        this.system = system;
+    }
+
+    public String getSystemCode() {
+        return SystemCode;
+    }
+
+    public void setSystemCode(String systemCode) {
+        SystemCode = systemCode;
     }
 }

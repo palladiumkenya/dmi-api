@@ -137,6 +137,8 @@ public class CaseExtractConsumer {
             diagnosis.setDiagnosisDate(LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter));
             diagnosis.setVoided(diagnosisDto.getVoided());
             diagnosis.setCaseId(illnessCase.getId());
+            diagnosis.setSystem(diagnosisDto.getSystem());
+            diagnosis.setSystemCode(diagnosis.getSystemCode());
             diagnosisList.add(diagnosis);
         });
         return diagnosisList;
@@ -284,6 +286,8 @@ public class CaseExtractConsumer {
                 diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
                 diagnosis.setDiagnosisDate(LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter));
                 diagnosis.setVoided(diagnosisDto.getVoided());
+                diagnosis.setSystemCode(diagnosisDto.getSystemCode());
+                diagnosis.setSystem(diagnosisDto.getSystem());
             }else {
                 diagnosis = new Diagnosis();
                 diagnosis.setDiagnosisId(diagnosisDto.getDiagnosisId());
@@ -291,6 +295,8 @@ public class CaseExtractConsumer {
                 diagnosis.setDiagnosisDate(LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter));
                 diagnosis.setVoided(diagnosisDto.getVoided());
                 diagnosis.setCaseId(illnessCase.getId());
+                diagnosis.setSystemCode(diagnosisDto.getSystemCode());
+                diagnosis.setSystem(diagnosisDto.getSystem());
             }
             diagnosisList.add(diagnosis);
         });
