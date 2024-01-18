@@ -12,5 +12,6 @@ public class RiskFactorDto {
     @Schema(description = "The reported comorbidity", example = "Diabetes")
     @NotBlank
     private String condition;
+    @Schema(example = "false")
     private Boolean voided = false;
 }

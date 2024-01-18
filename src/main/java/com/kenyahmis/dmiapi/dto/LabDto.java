@@ -1,16 +1,9 @@
 package com.kenyahmis.dmiapi.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.kenyahmis.dmiapi.validator.ValidTimestamp;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Data
 public class LabDto {
@@ -30,6 +23,7 @@ public class LabDto {
     @Schema(example = "2024-01-17 06:50:17")
     @ValidTimestamp
     private String labDate;
+    @Schema(example = "false")
     private Boolean voided = false;
 
     public LabDto() {}

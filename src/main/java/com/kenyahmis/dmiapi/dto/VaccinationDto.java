@@ -15,5 +15,6 @@ public class VaccinationDto {
     private Integer doses;
     @Schema(description = "Was the vaccination verified using a vaccination card or hospital records", example = "true")
     private Boolean verified;
+    @Schema(example = "false")
     private Boolean voided = false;
 }

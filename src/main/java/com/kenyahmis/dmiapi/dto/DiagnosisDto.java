@@ -20,6 +20,7 @@ public class DiagnosisDto {
     private String system;
     @Schema(description = "The code for a diagnosis as defined by the system library", example = "J00-J06")
     private String systemCode;
+    @Schema(example = "false")
     private Boolean voided = false;
     public DiagnosisDto() {}
 }

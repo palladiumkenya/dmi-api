@@ -16,6 +16,7 @@ public class VitalSignsDto {
     private String temperatureMode;
     @Schema(example = "25")
     private Integer respiratoryRate;
+    @Schema(example = "98")
     private Integer oxygenSaturation;
     @Schema(description = "The mode of oxygen saturation reading. Options include: 'Room air' 'On supplemental oxygen'", example = "Room air")
     private String oxygenSaturationMode;
