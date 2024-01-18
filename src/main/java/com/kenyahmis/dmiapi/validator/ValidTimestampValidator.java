@@ -11,6 +11,9 @@ public class ValidTimestampValidator implements ConstraintValidator<ValidTimesta
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return true;
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         try {
             LocalDateTime.parse(value, formatter);

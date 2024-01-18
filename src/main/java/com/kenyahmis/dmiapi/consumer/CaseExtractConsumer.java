@@ -26,6 +26,7 @@ public class CaseExtractConsumer {
 
     private final BatchService batchService;
     private final Logger LOGGER = LoggerFactory.getLogger(CaseExtractConsumer.class);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public CaseExtractConsumer(CaseRepository caseRepository, LabRepository labRepository, BatchService batchService,
                                ComplaintRepository complaintRepository, DiagnosisRepository diagnosisRepository,
@@ -61,7 +62,7 @@ public class CaseExtractConsumer {
         subject.setNupi(subjectDto.getNupi());
         subject.setPatientUniqueId(subjectDto.getPatientUniqueId());
         subject.setSex(subjectDto.getSex());
-        subject.setDateOfBirth(subjectDto.getDateOfBirth());
+        subject.setDateOfBirth(LocalDateTime.parse(subjectDto.getDateOfBirth(), formatter));
         subject.setCounty(subjectDto.getCounty());
         subject.setSubCounty(subjectDto.getSubCounty());
         return subject;
@@ -71,6 +72,7 @@ public class CaseExtractConsumer {
         vitalSignsDtoList.forEach(vitalSignsDto -> {
             VitalSign vitalSign = new VitalSign();
             vitalSign.setVitalSignId(vitalSignsDto.getVitalSignId());
+            vitalSign.setVitalSignDate(LocalDateTime.parse(vitalSignsDto.getVitalSignDate(), formatter));
             vitalSign.setCaseId(illnessCase.getId());
             vitalSign.setTemperature(vitalSignsDto.getTemperature());
             vitalSign.setTemperatureMode(vitalSignsDto.getTemperatureMode());
@@ -100,7 +102,7 @@ public class CaseExtractConsumer {
         List<Lab> labList = new ArrayList<>();
         labDtoList.forEach(labDto->{
             Lab lab = new Lab();
-            lab.setLabDate(labDto.getLabDate());
+            lab.setLabDate(LocalDateTime.parse(labDto.getLabDate(), formatter));
             lab.setOrderId(labDto.getOrderId());
             lab.setTestName(labDto.getTestName());
             lab.setTestResult(labDto.getTestResult());
@@ -117,7 +119,7 @@ public class CaseExtractConsumer {
             Complaint complaint = new Complaint();
             complaint.setComplaintId(complaintDto.getComplaintId());
             complaint.setComplaint(complaintDto.getComplaint());
-            complaint.setOnsetDate(complaintDto.getOnsetDate().toLocalDate());
+            complaint.setOnsetDate(LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate());
             complaint.setDuration(complaintDto.getDuration());
             complaint.setVoided(complaintDto.getVoided());
             complaint.setCaseId(illnessCase.getId());
@@ -132,7 +134,7 @@ public class CaseExtractConsumer {
             Diagnosis diagnosis = new Diagnosis();
             diagnosis.setDiagnosisId(diagnosisDto.getDiagnosisId());
             diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
-            diagnosis.setDiagnosisDate(diagnosisDto.getDiagnosisDate());
+            diagnosis.setDiagnosisDate(LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter));
             diagnosis.setVoided(diagnosisDto.getVoided());
             diagnosis.setCaseId(illnessCase.getId());
             diagnosisList.add(diagnosis);
@@ -147,12 +149,12 @@ public class CaseExtractConsumer {
                 Lab lab = optionalLab.get();
                 lab.setTestResult(labDto.getTestResult());
                 lab.setTestName(labDto.getTestName());
-                lab.setLabDate(labDto.getLabDate());
+                lab.setLabDate(LocalDateTime.parse(labDto.getLabDate(), formatter));
                 lab.setVoided(labDto.getVoided());
                 labList.add(lab);
             } else {
                 Lab lab = new Lab();
-                lab.setLabDate(labDto.getLabDate());
+                lab.setLabDate(LocalDateTime.parse(labDto.getLabDate(), formatter));
                 lab.setOrderId(labDto.getOrderId());
                 lab.setTestName(labDto.getTestName());
                 lab.setTestResult(labDto.getTestResult());
@@ -201,7 +203,7 @@ public class CaseExtractConsumer {
         subject.setAddress(subjectDto.getAddress());
         subject.setNupi(subject.getNupi());
         subject.setSex(subjectDto.getSex());
-        subject.setDateOfBirth(subjectDto.getDateOfBirth());
+        subject.setDateOfBirth(LocalDateTime.parse(subjectDto.getDateOfBirth(), formatter));
         subject.setCounty(subject.getCounty());
         subject.setSubCounty(subjectDto.getSubCounty());
         subjectRepository.save(subject);
@@ -237,6 +239,7 @@ public class CaseExtractConsumer {
                 vitalSign.setVitalSignId(vitalSignsDto.getVitalSignId());
                 vitalSign.setCaseId(illnessCase.getId());
             }
+            vitalSign.setVitalSignDate(LocalDateTime.parse(vitalSignsDto.getVitalSignDate(), formatter));
             vitalSign.setTemperature(vitalSignsDto.getTemperature());
             vitalSign.setTemperatureMode(vitalSignsDto.getTemperatureMode());
             vitalSign.setOxygenSaturation(vitalSignsDto.getOxygenSaturation());
@@ -254,7 +257,7 @@ public class CaseExtractConsumer {
             if (optionalLab.isPresent()){
                 complaint = optionalLab.get();
                 complaint.setComplaint(complaintDto.getComplaint());
-                complaint.setOnsetDate(complaintDto.getOnsetDate().toLocalDate());
+                complaint.setOnsetDate(LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate());
                 complaint.setVoided(complaintDto.getVoided());
                 complaint.setDuration(complaintDto.getDuration());
             }else {
@@ -262,7 +265,7 @@ public class CaseExtractConsumer {
                 complaint.setComplaintId(complaintDto.getComplaintId());
                 complaint.setComplaint(complaintDto.getComplaint());
                 complaint.setCaseId(illnessCase.getId());
-                complaint.setOnsetDate(complaintDto.getOnsetDate().toLocalDate());
+                complaint.setOnsetDate(LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate());
                 complaint.setDuration(complaintDto.getDuration());
                 complaint.setVoided(complaintDto.getVoided());
             }
@@ -279,13 +282,13 @@ public class CaseExtractConsumer {
             if (optionalDiagnosis.isPresent()){
                 diagnosis = optionalDiagnosis.get();
                 diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
-                diagnosis.setDiagnosisDate(diagnosisDto.getDiagnosisDate());
+                diagnosis.setDiagnosisDate(LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter));
                 diagnosis.setVoided(diagnosisDto.getVoided());
             }else {
                 diagnosis = new Diagnosis();
                 diagnosis.setDiagnosisId(diagnosisDto.getDiagnosisId());
                 diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
-                diagnosis.setDiagnosisDate(diagnosisDto.getDiagnosisDate());
+                diagnosis.setDiagnosisDate(LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter));
                 diagnosis.setVoided(diagnosisDto.getVoided());
                 diagnosis.setCaseId(illnessCase.getId());
             }
@@ -297,7 +300,6 @@ public class CaseExtractConsumer {
     @KafkaListener(id = "visitListener", topics = "visitTopic", containerFactory = "kafkaListenerContainerFactory")
     public void listenToMessage(List<CaseMessageDto> messages) {
         Set<UUID> batchIdList = new HashSet<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         messages.forEach(caseMessageDto -> {
             CaseDto m = caseMessageDto.getCaseDto();
             Optional<Case>  optionalRespiratoryIllnessCase = caseRepository.findByVisitUniqueIdAndMflCode(m.getCaseUniqueId(), m.getHospitalIdNumber());
@@ -311,10 +313,10 @@ public class CaseExtractConsumer {
                 aCase.setFinalOutcomeDate(LocalDateTime.parse(m.getFinalOutcomeDate(), formatter));
                 aCase.setVisitUniqueId(m.getCaseUniqueId());
                 aCase.setMflCode(m.getHospitalIdNumber());
-                aCase.setAdmissionDate(m.getAdmissionDate().toLocalDate());
-                aCase.setOutpatientDate(m.getOutpatientDate().toLocalDate());
-                aCase.setCreatedAt(m.getCreatedAt());
-                aCase.setUpdatedAt(m.getCreatedAt());
+                aCase.setAdmissionDate(LocalDateTime.parse(m.getAdmissionDate(), formatter).toLocalDate());
+                aCase.setOutpatientDate(LocalDateTime.parse(m.getOutpatientDate(), formatter).toLocalDate());
+                aCase.setCreatedAt(LocalDateTime.parse(m.getCreatedAt(), formatter));
+                aCase.setUpdatedAt(LocalDateTime.parse(m.getCreatedAt(), formatter));
                 aCase.setLoadDate(LocalDateTime.now());
                 caseRepository.save(aCase);
 
@@ -348,8 +350,8 @@ public class CaseExtractConsumer {
                 aCase.setFinalOutcomeDate(LocalDateTime.parse(m.getFinalOutcomeDate(), formatter));
                 aCase.setVisitUniqueId(m.getCaseUniqueId());
                 aCase.setMflCode(m.getHospitalIdNumber());
-                aCase.setCreatedAt(m.getCreatedAt());
-                aCase.setUpdatedAt(m.getCreatedAt());
+                aCase.setCreatedAt(LocalDateTime.parse(m.getCreatedAt(), formatter));
+                aCase.setUpdatedAt(LocalDateTime.parse(m.getCreatedAt(), formatter));
                 aCase.setLoadDate(LocalDateTime.now());
                 Subject subject = subjectRepository.save(mapSubjectDtoToSubject(m.getSubject()));
                 aCase.setSubjectId(subject.getId());

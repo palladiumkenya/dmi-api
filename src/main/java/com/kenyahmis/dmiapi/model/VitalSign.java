@@ -2,6 +2,8 @@ package com.kenyahmis.dmiapi.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -16,6 +18,7 @@ public class VitalSign {
     private Case illnessCase;
     @Column(name = "case_id")
     private UUID caseId;
+    private LocalDateTime vitalSignDate;
     private String vitalSignId;
     private Double temperature;
     private String temperatureMode;

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.kenyahmis.dmiapi.validator.ValidTimestamp;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -20,10 +21,8 @@ public class LabDto {
     private String upperLimit;
     private String lowerLimit;
     private String testResult;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime labDate;
+    @ValidTimestamp
+    private String labDate;
     private Boolean voided = false;
 
     public LabDto() {}
