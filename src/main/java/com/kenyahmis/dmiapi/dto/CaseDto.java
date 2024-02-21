@@ -25,7 +25,7 @@ public class CaseDto {
     @ValidCaseStatus
     private String status;
     @Schema(description = "The final clinical outcome of the reported case. Options include: 'Discharge from hospital'," +
-            " 'Refused hospital treatment', 'Absconded', 'Death', 'Referred to another facility'")
+            " 'Refused hospital treatment', 'Absconded', 'Death', 'Referred to another facility'", example = "Absconded")
     private String finalOutcome;
     @Schema(description = "Timestamp for the recorded final outcome", example = "2024-01-17 06:00:00")
     @ValidTimestamp

@@ -19,6 +19,7 @@ public class LabDto {
     private String upperLimit;
     @Schema(example = "1")
     private String lowerLimit;
+    @Schema(example = "1-5 mmol/L")
     private String testResult;
     @Schema(example = "2024-01-17 06:50:17")
     @ValidTimestamp

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/api")
@@ -40,15 +41,6 @@ public class CaseController {
         this.batchService = batchService;
     }
 
-//    @PostMapping(value = "/case")
-//    private ResponseEntity<?> addCase(@RequestBody @Valid IllnessRequest request, @AuthenticationPrincipal Jwt jwt) {
-//        // Create Batch Entry
-//        BatchOperation batch = batchService.createBatchOperation(request.getBatchId(), request.getTotalCases(), request.getMflCode());
-////        LOGGER.info("Working with request from {}", jwt.getClaimAsString("emr"));
-//        request.getCases().forEach(r -> kafkaTemplate.send("visitTopic", new CaseMessageDto(batch.getId(), r,  jwt.getClaimAsString("emr"))));
-//        return new ResponseEntity<>(new BatchAPIResponse("Success", batch.getId().toString()), HttpStatus.OK);
-//    }
-
     @Operation(summary = "Submit a case report. The API creates a case report in the staging area and updates it if an exising one is found")
     @PostMapping(value = "/case/batch")
     private ResponseEntity<?> addBatchCases(@RequestBody @Valid ValidList<CaseDto> request,
@@ -58,7 +50,7 @@ public class CaseController {
                 request.get(0).getHospitalIdNumber(), LocalDateTime.now());
         LOGGER.info("Working with request from {}", jwt.getClaimAsString("emr"));
         batchOperationsRepository.save(batch);
-        request.forEach(r -> kafkaTemplate.send("visitTopic", new CaseMessageDto(batch.getId(), r,  jwt.getClaimAsString("emr"))));
+        request.forEach((Consumer<? super CaseDto>) r -> kafkaTemplate.send("visitTopic", new CaseMessageDto(batch.getId(), r,  jwt.getClaimAsString("emr"))));
         return new ResponseEntity<>(new BatchAPIResponse("Success", batch.getId().toString()), HttpStatus.OK);
     }
 }
