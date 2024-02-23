@@ -8,7 +8,6 @@ import com.kenyahmis.dmiapi.model.BatchOperation;
 import com.kenyahmis.dmiapi.repository.BatchOperationsRepository;
 import com.kenyahmis.dmiapi.service.BatchService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

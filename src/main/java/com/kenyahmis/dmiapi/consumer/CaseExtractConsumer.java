@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -310,19 +312,24 @@ public class CaseExtractConsumer {
             CaseDto m = caseMessageDto.getCaseDto();
             Optional<Case>  optionalRespiratoryIllnessCase = caseRepository.findByVisitUniqueIdAndMflCode(m.getCaseUniqueId(), m.getHospitalIdNumber());
             Case aCase;
+            LocalDate admissionDate = m.getAdmissionDate() == null ? null : LocalDateTime.parse(m.getAdmissionDate(), formatter).toLocalDate();
+            LocalDate outpatientDate = m.getOutpatientDate() == null ? null : LocalDateTime.parse(m.getOutpatientDate(), formatter).toLocalDate();
+            LocalDateTime finalOutcomeDate = m.getFinalOutcomeDate() == null ? null : LocalDateTime.parse(m.getFinalOutcomeDate(), formatter);
+            LocalDateTime createdAt = m.getCreatedAt() == null ? null : LocalDateTime.parse(m.getCreatedAt(), formatter);
+            LocalDateTime updatedAt = m.getUpdatedAt() == null ? null : LocalDateTime.parse(m.getUpdatedAt(), formatter);
 
             if (optionalRespiratoryIllnessCase.isPresent()) {
                 // updated case
                 aCase = optionalRespiratoryIllnessCase.get();
                 aCase.setStatus(m.getStatus());
                 aCase.setFinalOutcome(m.getFinalOutcome());
-                aCase.setFinalOutcomeDate(LocalDateTime.parse(m.getFinalOutcomeDate(), formatter));
+                aCase.setFinalOutcomeDate(finalOutcomeDate);
                 aCase.setVisitUniqueId(m.getCaseUniqueId());
                 aCase.setMflCode(m.getHospitalIdNumber());
-                aCase.setAdmissionDate(LocalDateTime.parse(m.getAdmissionDate(), formatter).toLocalDate());
-                aCase.setOutpatientDate(LocalDateTime.parse(m.getOutpatientDate(), formatter).toLocalDate());
-                aCase.setCreatedAt(LocalDateTime.parse(m.getCreatedAt(), formatter));
-                aCase.setUpdatedAt(LocalDateTime.parse(m.getCreatedAt(), formatter));
+                aCase.setAdmissionDate(admissionDate);
+                aCase.setOutpatientDate(outpatientDate);
+                aCase.setCreatedAt(createdAt);
+                aCase.setUpdatedAt(updatedAt);
                 aCase.setLoadDate(LocalDateTime.now());
                 caseRepository.save(aCase);
 
@@ -353,11 +360,13 @@ public class CaseExtractConsumer {
                 aCase.setEmr(caseMessageDto.getEmr());
                 aCase.setStatus(m.getStatus());
                 aCase.setFinalOutcome(m.getFinalOutcome());
-                aCase.setFinalOutcomeDate(LocalDateTime.parse(m.getFinalOutcomeDate(), formatter));
+                aCase.setFinalOutcomeDate(finalOutcomeDate);
                 aCase.setVisitUniqueId(m.getCaseUniqueId());
                 aCase.setMflCode(m.getHospitalIdNumber());
-                aCase.setCreatedAt(LocalDateTime.parse(m.getCreatedAt(), formatter));
-                aCase.setUpdatedAt(LocalDateTime.parse(m.getCreatedAt(), formatter));
+                aCase.setAdmissionDate(admissionDate);
+                aCase.setOutpatientDate(outpatientDate);
+                aCase.setCreatedAt(createdAt);
+                aCase.setUpdatedAt(updatedAt);
                 aCase.setLoadDate(LocalDateTime.now());
                 Subject subject = subjectRepository.save(mapSubjectDtoToSubject(m.getSubject()));
                 aCase.setSubjectId(subject.getId());
