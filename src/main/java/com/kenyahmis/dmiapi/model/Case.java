@@ -22,7 +22,6 @@ public class Case {
     private UUID emrId;
     private String visitUniqueId;
     private String mflCode;
-    private String emr;
     private LocalDateTime interviewDate;
     private LocalDate admissionDate;
     private LocalDate outpatientDate;
