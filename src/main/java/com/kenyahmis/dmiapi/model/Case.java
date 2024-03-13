@@ -18,6 +18,8 @@ public class Case {
     private UUID batchId;
     @JoinColumn(name = "subjectId", referencedColumnName = "id")
     private UUID subjectId;
+    @JoinColumn(name = "emrId", referencedColumnName = "id")
+    private UUID emrId;
     private String visitUniqueId;
     private String mflCode;
     private String emr;

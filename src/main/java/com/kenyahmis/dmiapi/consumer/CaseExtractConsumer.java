@@ -25,6 +25,7 @@ public class CaseExtractConsumer {
     private final VitalSignRepository vitalSignRepository;
     private final VaccinationRepository vaccinationRepository;
     private final SubjectRepository subjectRepository;
+    private final EmrRepository emrRepository;
 
     private final BatchService batchService;
     private final Logger LOGGER = LoggerFactory.getLogger(CaseExtractConsumer.class);
@@ -33,7 +34,8 @@ public class CaseExtractConsumer {
     public CaseExtractConsumer(CaseRepository caseRepository, LabRepository labRepository, BatchService batchService,
                                ComplaintRepository complaintRepository, DiagnosisRepository diagnosisRepository,
                                RiskFactorRepository riskFactorRepository, VitalSignRepository vitalSignRepository,
-                               VaccinationRepository vaccinationRepository, SubjectRepository subjectRepository) {
+                               VaccinationRepository vaccinationRepository, SubjectRepository subjectRepository,
+                               EmrRepository emrRepository) {
         this.caseRepository = caseRepository;
         this.labRepository = labRepository;
         this.batchService = batchService;
@@ -43,6 +45,7 @@ public class CaseExtractConsumer {
         this.vaccinationRepository = vaccinationRepository;
         this.riskFactorRepository = riskFactorRepository;
         this.subjectRepository = subjectRepository;
+        this.emrRepository = emrRepository;
     }
 
     private List<RiskFactor> mapRiskFactorDtoToRiskFactor(List<RiskFactorDto> riskFactorDtoList, Case illnessCase) {
@@ -355,9 +358,15 @@ public class CaseExtractConsumer {
                 updateSubject(m.getSubject(), aCase);
             } else {
                 // created new case
+                UUID emrId = null;
+                Optional<Emr> emr = emrRepository.findByEmrNameAndVoided(caseMessageDto.getEmr(), false);
+                if (emr.isPresent()) {
+                    emrId = emr.get().getId();
+                }
                 aCase = new Case();
                 aCase.setBatchId(caseMessageDto.getBatchId());
-                aCase.setEmr(caseMessageDto.getEmr());
+//                aCase.setEmr(caseMessageDto.getEmr());
+                aCase.setEmrId(emrId);
                 aCase.setStatus(m.getStatus());
                 aCase.setFinalOutcome(m.getFinalOutcome());
                 aCase.setFinalOutcomeDate(finalOutcomeDate);
