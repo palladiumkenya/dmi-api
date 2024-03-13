@@ -1,0 +1,1 @@
+ALTER TABLE public.illness_case DROP COLUMN emr;
