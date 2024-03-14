@@ -48,6 +48,10 @@ public class CaseDto {
     @Valid
     private SubjectDto subject;
     @Valid
+    @JsonProperty("flaggedConditions")
+    private List<FlaggedConditionDto> flaggedConditionDtoList;
+    @Valid
+    @JsonProperty("vitalSigns")
     private List<VitalSignsDto> vitalSigns;
     @Valid
     @JsonProperty("riskFactors")

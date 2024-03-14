@@ -26,6 +26,7 @@ public class CaseExtractConsumer {
     private final VaccinationRepository vaccinationRepository;
     private final SubjectRepository subjectRepository;
     private final EmrRepository emrRepository;
+    private final FlaggedConditionRepository flaggedConditionRepository;
 
     private final BatchService batchService;
     private final Logger LOGGER = LoggerFactory.getLogger(CaseExtractConsumer.class);
@@ -35,7 +36,7 @@ public class CaseExtractConsumer {
                                ComplaintRepository complaintRepository, DiagnosisRepository diagnosisRepository,
                                RiskFactorRepository riskFactorRepository, VitalSignRepository vitalSignRepository,
                                VaccinationRepository vaccinationRepository, SubjectRepository subjectRepository,
-                               EmrRepository emrRepository) {
+                               EmrRepository emrRepository, FlaggedConditionRepository flaggedConditionRepository) {
         this.caseRepository = caseRepository;
         this.labRepository = labRepository;
         this.batchService = batchService;
@@ -46,6 +47,7 @@ public class CaseExtractConsumer {
         this.riskFactorRepository = riskFactorRepository;
         this.subjectRepository = subjectRepository;
         this.emrRepository = emrRepository;
+        this.flaggedConditionRepository = flaggedConditionRepository;
     }
 
     private List<RiskFactor> mapRiskFactorDtoToRiskFactor(List<RiskFactorDto> riskFactorDtoList, Case illnessCase) {
@@ -131,6 +133,19 @@ public class CaseExtractConsumer {
             complaintList.add(complaint);
         });
         return complaintList;
+    }
+
+    private List<FlaggedCondition> mapFlaggedConditionDtoToFlaggedCondition(List<FlaggedConditionDto> flaggedConditionDtoList, Case illnessCase) {
+        List<FlaggedCondition> flaggedConditionList = new ArrayList<>();
+        flaggedConditionDtoList.forEach(flaggedConditionDto -> {
+            FlaggedCondition flaggedCondition = new FlaggedCondition();
+            flaggedCondition.setConditionId(flaggedConditionDto.getConditionId());
+            flaggedCondition.setConditionName(flaggedConditionDto.getConditionName());
+            flaggedCondition.setVoided(flaggedConditionDto.getVoided());
+            flaggedCondition.setCaseId(illnessCase.getId());
+            flaggedConditionList.add(flaggedCondition);
+        });
+        return flaggedConditionList;
     }
 
     private List<Diagnosis> mapDiagnosisDtoToDiagnosis(List<DiagnosisDto> diagnosisDtoList, Case illnessCase) {
@@ -281,6 +296,28 @@ public class CaseExtractConsumer {
         complaintRepository.saveAll(complaintList);
     }
 
+    private void updateFlaggedConditions(List<FlaggedConditionDto> flaggedConditionDtoList, Case illnessCase) {
+        List<FlaggedCondition> flaggedConditionList = new ArrayList<>();
+        flaggedConditionDtoList.forEach(flaggedConditionDto -> {
+            Optional<FlaggedCondition> optionalFlaggedCondition = flaggedConditionRepository
+                    .findByCaseIdAndConditionId(illnessCase.getId(), flaggedConditionDto.getConditionId());
+            FlaggedCondition flaggedCondition;
+            if (optionalFlaggedCondition.isPresent()){
+                flaggedCondition = optionalFlaggedCondition.get();
+                flaggedCondition.setVoided(flaggedConditionDto.getVoided());
+                flaggedCondition.setConditionName(flaggedConditionDto.getConditionName());
+            } else {
+                flaggedCondition = new FlaggedCondition();
+                flaggedCondition.setCaseId(illnessCase.getId());
+                flaggedCondition.setConditionName(flaggedConditionDto.getConditionName());
+                flaggedCondition.setConditionId(flaggedConditionDto.getConditionId());
+                flaggedCondition.setVoided(flaggedConditionDto.getVoided());
+            }
+            flaggedConditionList.add(flaggedCondition);
+        });
+        flaggedConditionRepository.saveAll(flaggedConditionList);
+    }
+
     private void updateDiagnosis(List<DiagnosisDto> diagnosisDtoList, Case illnessCase) {
         List<Diagnosis> diagnosisList = new ArrayList<>();
         diagnosisDtoList.forEach(diagnosisDto -> {
@@ -356,6 +393,9 @@ public class CaseExtractConsumer {
 
                 // update subject
                 updateSubject(m.getSubject(), aCase);
+
+                // update flagged conditions
+                updateFlaggedConditions(m.getFlaggedConditionDtoList(), aCase);
             } else {
                 // created new case
                 UUID emrId = null;
@@ -365,7 +405,6 @@ public class CaseExtractConsumer {
                 }
                 aCase = new Case();
                 aCase.setBatchId(caseMessageDto.getBatchId());
-//                aCase.setEmr(caseMessageDto.getEmr());
                 aCase.setEmrId(emrId);
                 aCase.setStatus(m.getStatus());
                 aCase.setFinalOutcome(m.getFinalOutcome());
@@ -386,6 +425,7 @@ public class CaseExtractConsumer {
                 vitalSignRepository.saveAll(mapVitalSignDtoToVitalSign(m.getVitalSigns(), aCase));
                 vaccinationRepository.saveAll(mapVaccinationDtoToVaccination(m.getVaccinationDtoList(), aCase));
                 riskFactorRepository.saveAll(mapRiskFactorDtoToRiskFactor(m.getRiskFactorDtoList(), aCase));
+                flaggedConditionRepository.saveAll(mapFlaggedConditionDtoToFlaggedCondition(m.getFlaggedConditionDtoList(), aCase));
             }
             batchIdList.add(caseMessageDto.getBatchId());
         });
