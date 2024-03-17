@@ -140,7 +140,7 @@ public class CaseExtractConsumer {
         flaggedConditionDtoList.forEach(flaggedConditionDto -> {
             FlaggedCondition flaggedCondition = new FlaggedCondition();
             flaggedCondition.setConditionId(flaggedConditionDto.getConditionId());
-            flaggedCondition.setConditionName(flaggedConditionDto.getConditionName());
+            flaggedCondition.setConditionName(flaggedConditionDto.getConditionName().toUpperCase());
             flaggedCondition.setVoided(flaggedConditionDto.getVoided());
             flaggedCondition.setCaseId(illnessCase.getId());
             flaggedConditionList.add(flaggedCondition);
@@ -305,11 +305,11 @@ public class CaseExtractConsumer {
             if (optionalFlaggedCondition.isPresent()){
                 flaggedCondition = optionalFlaggedCondition.get();
                 flaggedCondition.setVoided(flaggedConditionDto.getVoided());
-                flaggedCondition.setConditionName(flaggedConditionDto.getConditionName());
+                flaggedCondition.setConditionName(flaggedConditionDto.getConditionName().toUpperCase());
             } else {
                 flaggedCondition = new FlaggedCondition();
                 flaggedCondition.setCaseId(illnessCase.getId());
-                flaggedCondition.setConditionName(flaggedConditionDto.getConditionName());
+                flaggedCondition.setConditionName(flaggedConditionDto.getConditionName().toUpperCase());
                 flaggedCondition.setConditionId(flaggedConditionDto.getConditionId());
                 flaggedCondition.setVoided(flaggedConditionDto.getVoided());
             }

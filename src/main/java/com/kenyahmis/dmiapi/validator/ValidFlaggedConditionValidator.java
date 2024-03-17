@@ -13,6 +13,6 @@ public class ValidFlaggedConditionValidator implements ConstraintValidator<Valid
         }
         List<String> conditionList = List.of("DYSENTERY", "CHOLERA","ILI", "SARI", "RIFT VALLEY FEVER", "MALARIA",
                 "CHIKUNGUNYA", "POLIOMYELITIS", "VIRAL HAEMORRHAGIC FEVER", "MEASLES");
-        return conditionList.contains(value);
+        return conditionList.contains(value.toUpperCase());
     }
 }
