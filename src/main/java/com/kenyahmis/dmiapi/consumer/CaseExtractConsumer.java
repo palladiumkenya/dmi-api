@@ -64,12 +64,13 @@ public class CaseExtractConsumer {
     }
 
     private Subject mapSubjectDtoToSubject(SubjectDto subjectDto) {
+        LocalDateTime dob  = subjectDto.getDateOfBirth() == null ? null : LocalDateTime.parse(subjectDto.getDateOfBirth(), formatter);
         Subject subject = new Subject();
         subject.setAddress(subjectDto.getAddress());
         subject.setNupi(subjectDto.getNupi());
         subject.setPatientUniqueId(subjectDto.getPatientUniqueId());
         subject.setSex(subjectDto.getSex());
-        subject.setDateOfBirth(LocalDateTime.parse(subjectDto.getDateOfBirth(), formatter));
+        subject.setDateOfBirth(dob);
         subject.setCounty(subjectDto.getCounty());
         subject.setSubCounty(subjectDto.getSubCounty());
         return subject;
@@ -108,8 +109,9 @@ public class CaseExtractConsumer {
     private List<Lab> mapLabDtoToLab(List<LabDto> labDtoList, Case illnessCase)  {
         List<Lab> labList = new ArrayList<>();
         labDtoList.forEach(labDto->{
+            LocalDateTime labDate = labDto.getLabDate() == null ? null : LocalDateTime.parse(labDto.getLabDate(), formatter);
             Lab lab = new Lab();
-            lab.setLabDate(LocalDateTime.parse(labDto.getLabDate(), formatter));
+            lab.setLabDate(labDate);
             lab.setOrderId(labDto.getOrderId());
             lab.setTestName(labDto.getTestName());
             lab.setTestResult(labDto.getTestResult());
@@ -123,10 +125,11 @@ public class CaseExtractConsumer {
     private List<Complaint> mapComplaintDtoToComplaint(List<ComplaintDto> complaintDtoList, Case illnessCase) {
         List<Complaint> complaintList = new ArrayList<>();
         complaintDtoList.forEach(complaintDto -> {
+            LocalDate onsetDate = complaintDto.getOnsetDate() == null ? null : LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate();
             Complaint complaint = new Complaint();
             complaint.setComplaintId(complaintDto.getComplaintId());
             complaint.setComplaint(complaintDto.getComplaint());
-            complaint.setOnsetDate(LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate());
+            complaint.setOnsetDate(onsetDate);
             complaint.setDuration(complaintDto.getDuration());
             complaint.setVoided(complaintDto.getVoided());
             complaint.setCaseId(illnessCase.getId());
@@ -151,10 +154,11 @@ public class CaseExtractConsumer {
     private List<Diagnosis> mapDiagnosisDtoToDiagnosis(List<DiagnosisDto> diagnosisDtoList, Case illnessCase) {
         List<Diagnosis> diagnosisList = new ArrayList<>();
         diagnosisDtoList.forEach(diagnosisDto -> {
+            LocalDateTime diagnosisDate = diagnosisDto.getDiagnosisDate() == null ? null : LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter);
             Diagnosis diagnosis = new Diagnosis();
             diagnosis.setDiagnosisId(diagnosisDto.getDiagnosisId());
             diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
-            diagnosis.setDiagnosisDate(LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter));
+            diagnosis.setDiagnosisDate(diagnosisDate);
             diagnosis.setVoided(diagnosisDto.getVoided());
             diagnosis.setCaseId(illnessCase.getId());
             diagnosis.setSystem(diagnosisDto.getSystem());

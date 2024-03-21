@@ -23,10 +23,8 @@ public class SubjectDto {
     @ValidTimestamp
     private String dateOfBirth;
     @Schema(example = "Mombasa")
-    @NotBlank
     private String county;
     @Schema(example = "Mvita")
-    @NotBlank
     private String subCounty;
 }
 
