@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
+@Schema(name = "lab")
 public class LabDto {
     @Schema(description = "The unique identifier for the lab order request within the submitting EMR", example = "88997")
     @NotBlank

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
+@Schema(name = "flaggedConditions")
 public class FlaggedConditionDto {
     @NotBlank
     private String conditionId;

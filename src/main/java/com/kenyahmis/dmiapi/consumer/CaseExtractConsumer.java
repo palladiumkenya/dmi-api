@@ -239,6 +239,7 @@ public class CaseExtractConsumer {
 
     private void updateSubject(SubjectDto subjectDto, Case illnessCase) {
         Optional<Subject> optionalSubject = subjectRepository.findById(illnessCase.getSubjectId());
+        LocalDateTime dob = subjectDto.getDateOfBirth() == null ? null : LocalDateTime.parse(subjectDto.getDateOfBirth(), formatter);
         Subject subject;
         if (optionalSubject.isPresent()) {
             subject = optionalSubject.get();
@@ -249,7 +250,7 @@ public class CaseExtractConsumer {
         subject.setAddress(subjectDto.getAddress());
         subject.setNupi(subject.getNupi());
         subject.setSex(subjectDto.getSex());
-        subject.setDateOfBirth(LocalDateTime.parse(subjectDto.getDateOfBirth(), formatter));
+        subject.setDateOfBirth(dob);
         subject.setCounty(subject.getCounty());
         subject.setSubCounty(subjectDto.getSubCounty());
         subjectRepository.save(subject);
@@ -280,6 +281,7 @@ public class CaseExtractConsumer {
         if (vitalSignsDtoList != null) {
             List<VitalSign> vitalSignList = new ArrayList<>();
             vitalSignsDtoList.forEach(vitalSignsDto -> {
+                LocalDateTime vitalSignDate = vitalSignsDto.getVitalSignDate() == null ? null : LocalDateTime.parse(vitalSignsDto.getVitalSignDate(), formatter);
                 Optional<VitalSign> optionalVitalSign = vitalSignRepository.findByCaseIdAndVitalSignId(illnessCase.getId(), vitalSignsDto.getVitalSignId());
                 VitalSign vitalSign;
                 if (optionalVitalSign.isPresent()) {
@@ -289,7 +291,7 @@ public class CaseExtractConsumer {
                     vitalSign.setVitalSignId(vitalSignsDto.getVitalSignId());
                     vitalSign.setCaseId(illnessCase.getId());
                 }
-                vitalSign.setVitalSignDate(LocalDateTime.parse(vitalSignsDto.getVitalSignDate(), formatter));
+                vitalSign.setVitalSignDate(vitalSignDate);
                 vitalSign.setTemperature(vitalSignsDto.getTemperature());
                 vitalSign.setTemperatureMode(vitalSignsDto.getTemperatureMode());
                 vitalSign.setOxygenSaturation(vitalSignsDto.getOxygenSaturation());
@@ -304,12 +306,13 @@ public class CaseExtractConsumer {
         if (complaintDtoList != null) {
             List<Complaint> complaintList = new ArrayList<>();
             complaintDtoList.forEach(complaintDto -> {
+                LocalDate onsetDate = complaintDto == null ? null : LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate();
                 Optional<Complaint> optionalLab = complaintRepository.findByCaseIdAndComplaintId(illnessCase.getId(), complaintDto.getComplaintId());
                 Complaint complaint;
                 if (optionalLab.isPresent()){
                     complaint = optionalLab.get();
                     complaint.setComplaint(complaintDto.getComplaint());
-                    complaint.setOnsetDate(LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate());
+                    complaint.setOnsetDate(onsetDate);
                     complaint.setVoided(complaintDto.getVoided());
                     complaint.setDuration(complaintDto.getDuration());
                 }else {
@@ -317,7 +320,7 @@ public class CaseExtractConsumer {
                     complaint.setComplaintId(complaintDto.getComplaintId());
                     complaint.setComplaint(complaintDto.getComplaint());
                     complaint.setCaseId(illnessCase.getId());
-                    complaint.setOnsetDate(LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate());
+                    complaint.setOnsetDate(onsetDate);
                     complaint.setDuration(complaintDto.getDuration());
                     complaint.setVoided(complaintDto.getVoided());
                 }
@@ -325,7 +328,6 @@ public class CaseExtractConsumer {
             });
             complaintRepository.saveAll(complaintList);
         }
-
     }
 
     private void updateFlaggedConditions(List<FlaggedConditionDto> flaggedConditionDtoList, Case illnessCase) {
@@ -359,10 +361,11 @@ public class CaseExtractConsumer {
             diagnosisDtoList.forEach(diagnosisDto -> {
                 Optional<Diagnosis> optionalDiagnosis = diagnosisRepository.findByCaseIdAndDiagnosisId(illnessCase.getId(), diagnosisDto.getDiagnosisId());
                 Diagnosis diagnosis;
+                LocalDateTime diagnosisDate = diagnosisDto.getDiagnosisDate() == null ? null : LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter);
                 if (optionalDiagnosis.isPresent()){
                     diagnosis = optionalDiagnosis.get();
                     diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
-                    diagnosis.setDiagnosisDate(LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter));
+                    diagnosis.setDiagnosisDate(diagnosisDate);
                     diagnosis.setVoided(diagnosisDto.getVoided());
                     diagnosis.setSystemCode(diagnosisDto.getSystemCode());
                     diagnosis.setSystem(diagnosisDto.getSystem());
@@ -370,7 +373,7 @@ public class CaseExtractConsumer {
                     diagnosis = new Diagnosis();
                     diagnosis.setDiagnosisId(diagnosisDto.getDiagnosisId());
                     diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
-                    diagnosis.setDiagnosisDate(LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter));
+                    diagnosis.setDiagnosisDate(diagnosisDate);
                     diagnosis.setVoided(diagnosisDto.getVoided());
                     diagnosis.setCaseId(illnessCase.getId());
                     diagnosis.setSystemCode(diagnosisDto.getSystemCode());

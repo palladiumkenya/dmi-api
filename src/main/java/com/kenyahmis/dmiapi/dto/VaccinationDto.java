@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 @Data
+@Schema(name = "vaccinations")
 public class VaccinationDto {
     @NotBlank
     @Schema(description = "The unique identifier for the vaccination within the submitting EMR", example = "98765")

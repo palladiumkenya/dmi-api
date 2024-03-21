@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
+@Schema(name = "vitalSigns")
 public class VitalSignsDto {
     @Schema(description = "The unique identifier for the vital sign entry within the submitting EMR", example = "765789")
     @NotBlank

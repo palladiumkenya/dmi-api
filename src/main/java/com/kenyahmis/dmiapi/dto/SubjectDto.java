@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
+@Schema(name = "subject")
 public class SubjectDto {
     @Schema(description = "A unique identifier for the patient within the submitting EMR", example = "8599284")
     @NotBlank

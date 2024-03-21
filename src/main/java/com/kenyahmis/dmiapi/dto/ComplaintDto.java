@@ -7,6 +7,7 @@ import lombok.Data;
 
 
 @Data
+@Schema(name = "complaints")
 public class ComplaintDto {
     @Schema(description = "The unique identifier for the complaint within the submitting EMR", example = "8765447")
     @NotBlank

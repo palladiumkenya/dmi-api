@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
+@Schema(name = "riskFactors")
 public class RiskFactorDto {
     @Schema(description = "The unique identifier for the risk factor/comorbidity", example = "99876")
     @NotBlank
