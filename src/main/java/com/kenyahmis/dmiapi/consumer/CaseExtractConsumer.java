@@ -306,7 +306,7 @@ public class CaseExtractConsumer {
         if (complaintDtoList != null) {
             List<Complaint> complaintList = new ArrayList<>();
             complaintDtoList.forEach(complaintDto -> {
-                LocalDate onsetDate = complaintDto == null ? null : LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate();
+                LocalDate onsetDate = complaintDto.getOnsetDate() == null ? null : LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate();
                 Optional<Complaint> optionalLab = complaintRepository.findByCaseIdAndComplaintId(illnessCase.getId(), complaintDto.getComplaintId());
                 Complaint complaint;
                 if (optionalLab.isPresent()){
