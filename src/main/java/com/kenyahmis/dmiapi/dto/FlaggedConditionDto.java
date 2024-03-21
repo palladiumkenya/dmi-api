@@ -9,6 +9,7 @@ import lombok.Data;
 @Schema(name = "flaggedConditions")
 public class FlaggedConditionDto {
     @NotBlank
+    @Schema(example = "3455", description = "The unique identifier for the flagged condition")
     private String conditionId;
     @Schema(description = "Condition that was automatically flagged by the EMR. Options include: DYSENTERY, CHOLERA," +
             " ILI, SARI, RIFT VALLEY FEVER, MALARIA, CHIKUNGUNYA, POLIOMYELITIS, VIRAL HAEMORRHAGIC FEVER, MEASLES", example = "DYSENTERY")

@@ -29,15 +29,12 @@ import java.util.function.Consumer;
 public class CaseController {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private final BatchService batchService;
     private final BatchOperationsRepository batchOperationsRepository;
     private final Logger LOGGER = LoggerFactory.getLogger(CaseController.class);
 
-    public CaseController(KafkaTemplate<String, Object> kafkaTemplate, BatchOperationsRepository batchOperationsRepository,
-                          BatchService batchService) {
+    public CaseController(KafkaTemplate<String, Object> kafkaTemplate, BatchOperationsRepository batchOperationsRepository) {
         this.kafkaTemplate = kafkaTemplate;
         this.batchOperationsRepository = batchOperationsRepository;
-        this.batchService = batchService;
     }
 
     @Operation(summary = "Submit a case report. The API creates a case report in the staging area and updates it if an exising one is found")
