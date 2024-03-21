@@ -52,14 +52,16 @@ public class CaseExtractConsumer {
 
     private List<RiskFactor> mapRiskFactorDtoToRiskFactor(List<RiskFactorDto> riskFactorDtoList, Case illnessCase) {
         List<RiskFactor> riskFactorList = new ArrayList<>();
-        riskFactorDtoList.forEach(riskFactorDto -> {
-            RiskFactor riskFactor = new RiskFactor();
-            riskFactor.setCaseId(illnessCase.getId());
-            riskFactor.setRiskFactorId(riskFactorDto.getRiskFactorId());
-            riskFactor.setCondition(riskFactorDto.getCondition());
-            riskFactor.setVoided(riskFactorDto.getVoided());
-            riskFactorList.add(riskFactor);
-        });
+        if (riskFactorDtoList != null) {
+            riskFactorDtoList.forEach(riskFactorDto -> {
+                RiskFactor riskFactor = new RiskFactor();
+                riskFactor.setCaseId(illnessCase.getId());
+                riskFactor.setRiskFactorId(riskFactorDto.getRiskFactorId());
+                riskFactor.setCondition(riskFactorDto.getCondition());
+                riskFactor.setVoided(riskFactorDto.getVoided());
+                riskFactorList.add(riskFactor);
+            });
+        }
         return riskFactorList;
     }
 
@@ -77,144 +79,162 @@ public class CaseExtractConsumer {
     }
     private List<VitalSign> mapVitalSignDtoToVitalSign(List<VitalSignsDto> vitalSignsDtoList, Case illnessCase) {
         List<VitalSign> vitalSignList = new ArrayList<>();
-        vitalSignsDtoList.forEach(vitalSignsDto -> {
-            VitalSign vitalSign = new VitalSign();
-            vitalSign.setVitalSignId(vitalSignsDto.getVitalSignId());
-            vitalSign.setVitalSignDate(LocalDateTime.parse(vitalSignsDto.getVitalSignDate(), formatter));
-            vitalSign.setCaseId(illnessCase.getId());
-            vitalSign.setTemperature(vitalSignsDto.getTemperature());
-            vitalSign.setTemperatureMode(vitalSignsDto.getTemperatureMode());
-            vitalSign.setOxygenSaturation(vitalSignsDto.getOxygenSaturation());
-            vitalSign.setOxygenSaturationMode(vitalSignsDto.getOxygenSaturationMode());
-            vitalSign.setVoided(vitalSignsDto.getVoided());
-            vitalSignList.add(vitalSign);
-        });
+        if (vitalSignsDtoList != null) {
+            vitalSignsDtoList.forEach(vitalSignsDto -> {
+                VitalSign vitalSign = new VitalSign();
+                vitalSign.setVitalSignId(vitalSignsDto.getVitalSignId());
+                vitalSign.setVitalSignDate(LocalDateTime.parse(vitalSignsDto.getVitalSignDate(), formatter));
+                vitalSign.setCaseId(illnessCase.getId());
+                vitalSign.setTemperature(vitalSignsDto.getTemperature());
+                vitalSign.setTemperatureMode(vitalSignsDto.getTemperatureMode());
+                vitalSign.setOxygenSaturation(vitalSignsDto.getOxygenSaturation());
+                vitalSign.setOxygenSaturationMode(vitalSignsDto.getOxygenSaturationMode());
+                vitalSign.setVoided(vitalSignsDto.getVoided());
+                vitalSignList.add(vitalSign);
+            });
+        }
         return vitalSignList;
     }
 
     private List<Vaccination> mapVaccinationDtoToVaccination(List<VaccinationDto> vaccinationDtoList, Case illnessCase) {
         List<Vaccination> vaccinationList = new ArrayList<>();
-        vaccinationDtoList.forEach(vaccinationDto -> {
-            Vaccination vaccination = new Vaccination();
-            vaccination.setCaseId(illnessCase.getId());
-            vaccination.setVaccinationId(vaccinationDto.getVaccinationId());
-            vaccination.setVaccination(vaccinationDto.getVaccination());
-            vaccination.setDoses(vaccinationDto.getDoses());
-            vaccination.setVerified(vaccinationDto.getVerified());
-            vaccination.setVoided(vaccinationDto.getVoided());
-            vaccinationList.add(vaccination);
-        });
-        return vaccinationList;
-    }
-    private List<Lab> mapLabDtoToLab(List<LabDto> labDtoList, Case illnessCase)  {
-        List<Lab> labList = new ArrayList<>();
-        labDtoList.forEach(labDto->{
-            LocalDateTime labDate = labDto.getLabDate() == null ? null : LocalDateTime.parse(labDto.getLabDate(), formatter);
-            Lab lab = new Lab();
-            lab.setLabDate(labDate);
-            lab.setOrderId(labDto.getOrderId());
-            lab.setTestName(labDto.getTestName());
-            lab.setTestResult(labDto.getTestResult());
-            lab.setVoided(labDto.getVoided());
-            lab.setCaseId(illnessCase.getId());
-            labList.add(lab);
-        });
-        return labList;
-    }
-
-    private List<Complaint> mapComplaintDtoToComplaint(List<ComplaintDto> complaintDtoList, Case illnessCase) {
-        List<Complaint> complaintList = new ArrayList<>();
-        complaintDtoList.forEach(complaintDto -> {
-            LocalDate onsetDate = complaintDto.getOnsetDate() == null ? null : LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate();
-            Complaint complaint = new Complaint();
-            complaint.setComplaintId(complaintDto.getComplaintId());
-            complaint.setComplaint(complaintDto.getComplaint());
-            complaint.setOnsetDate(onsetDate);
-            complaint.setDuration(complaintDto.getDuration());
-            complaint.setVoided(complaintDto.getVoided());
-            complaint.setCaseId(illnessCase.getId());
-            complaintList.add(complaint);
-        });
-        return complaintList;
-    }
-
-    private List<FlaggedCondition> mapFlaggedConditionDtoToFlaggedCondition(List<FlaggedConditionDto> flaggedConditionDtoList, Case illnessCase) {
-        List<FlaggedCondition> flaggedConditionList = new ArrayList<>();
-        flaggedConditionDtoList.forEach(flaggedConditionDto -> {
-            FlaggedCondition flaggedCondition = new FlaggedCondition();
-            flaggedCondition.setConditionId(flaggedConditionDto.getConditionId());
-            flaggedCondition.setConditionName(flaggedConditionDto.getConditionName().toUpperCase());
-            flaggedCondition.setVoided(flaggedConditionDto.getVoided());
-            flaggedCondition.setCaseId(illnessCase.getId());
-            flaggedConditionList.add(flaggedCondition);
-        });
-        return flaggedConditionList;
-    }
-
-    private List<Diagnosis> mapDiagnosisDtoToDiagnosis(List<DiagnosisDto> diagnosisDtoList, Case illnessCase) {
-        List<Diagnosis> diagnosisList = new ArrayList<>();
-        diagnosisDtoList.forEach(diagnosisDto -> {
-            LocalDateTime diagnosisDate = diagnosisDto.getDiagnosisDate() == null ? null : LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter);
-            Diagnosis diagnosis = new Diagnosis();
-            diagnosis.setDiagnosisId(diagnosisDto.getDiagnosisId());
-            diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
-            diagnosis.setDiagnosisDate(diagnosisDate);
-            diagnosis.setVoided(diagnosisDto.getVoided());
-            diagnosis.setCaseId(illnessCase.getId());
-            diagnosis.setSystem(diagnosisDto.getSystem());
-            diagnosis.setSystemCode(diagnosis.getSystemCode());
-            diagnosisList.add(diagnosis);
-        });
-        return diagnosisList;
-    }
-    private void updateLabs(List<LabDto> labDtoList, Case illnessCase) {
-        List<Lab> labList = new ArrayList<>();
-        labDtoList.forEach(labDto -> {
-            Optional<Lab> optionalLab = labRepository.findByCaseIdAndOrderId(illnessCase.getId(), labDto.getOrderId());
-            if (optionalLab.isPresent()){
-                Lab lab = optionalLab.get();
-                lab.setTestResult(labDto.getTestResult());
-                lab.setTestName(labDto.getTestName());
-                lab.setLabDate(LocalDateTime.parse(labDto.getLabDate(), formatter));
-                lab.setVoided(labDto.getVoided());
-                labList.add(lab);
-            } else {
-                Lab lab = new Lab();
-                lab.setLabDate(LocalDateTime.parse(labDto.getLabDate(), formatter));
-                lab.setOrderId(labDto.getOrderId());
-                lab.setTestName(labDto.getTestName());
-                lab.setTestResult(labDto.getTestResult());
-                lab.setVoided(labDto.getVoided());
-                lab.setCaseId(illnessCase.getId());
-                labList.add(lab);
-            }
-        });
-        labRepository.saveAll(labList);
-    }
-
-    private void updateVaccinations(List<VaccinationDto> vaccinationDtoList, Case illnessCase) {
-        List<Vaccination> vaccinationList = new ArrayList<>();
-        vaccinationDtoList.forEach(vaccinationDto -> {
-            Optional<Vaccination> optionalVaccination = vaccinationRepository.findByCaseIdAndVaccinationId(illnessCase.getId(), vaccinationDto.getVaccinationId());
-            Vaccination vaccination;
-            if (optionalVaccination.isPresent()) {
-                vaccination = optionalVaccination.get();
-                vaccination.setVoided(vaccinationDto.getVoided());
-                vaccination.setVerified(vaccinationDto.getVerified());
-                vaccination.setVaccination(vaccinationDto.getVaccination());
-                vaccination.setDoses(vaccinationDto.getDoses());
-            } else {
-                vaccination = new Vaccination();
+        if (vaccinationDtoList != null) {
+            vaccinationDtoList.forEach(vaccinationDto -> {
+                Vaccination vaccination = new Vaccination();
                 vaccination.setCaseId(illnessCase.getId());
                 vaccination.setVaccinationId(vaccinationDto.getVaccinationId());
                 vaccination.setVaccination(vaccinationDto.getVaccination());
                 vaccination.setDoses(vaccinationDto.getDoses());
                 vaccination.setVerified(vaccinationDto.getVerified());
                 vaccination.setVoided(vaccinationDto.getVoided());
-            }
-            vaccinationList.add(vaccination);
-        });
-        vaccinationRepository.saveAll(vaccinationList);
+                vaccinationList.add(vaccination);
+            });
+        }
+        return vaccinationList;
+    }
+    private List<Lab> mapLabDtoToLab(List<LabDto> labDtoList, Case illnessCase)  {
+        List<Lab> labList = new ArrayList<>();
+        if (labDtoList != null) {
+            labDtoList.forEach(labDto->{
+                LocalDateTime labDate = labDto.getLabDate() == null ? null : LocalDateTime.parse(labDto.getLabDate(), formatter);
+                Lab lab = new Lab();
+                lab.setLabDate(labDate);
+                lab.setOrderId(labDto.getOrderId());
+                lab.setTestName(labDto.getTestName());
+                lab.setTestResult(labDto.getTestResult());
+                lab.setVoided(labDto.getVoided());
+                lab.setCaseId(illnessCase.getId());
+                labList.add(lab);
+            });
+        }
+        return labList;
+    }
+
+    private List<Complaint> mapComplaintDtoToComplaint(List<ComplaintDto> complaintDtoList, Case illnessCase) {
+        List<Complaint> complaintList = new ArrayList<>();
+        if (complaintDtoList != null) {
+            complaintDtoList.forEach(complaintDto -> {
+                LocalDate onsetDate = complaintDto.getOnsetDate() == null ? null : LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate();
+                Complaint complaint = new Complaint();
+                complaint.setComplaintId(complaintDto.getComplaintId());
+                complaint.setComplaint(complaintDto.getComplaint());
+                complaint.setOnsetDate(onsetDate);
+                complaint.setDuration(complaintDto.getDuration());
+                complaint.setVoided(complaintDto.getVoided());
+                complaint.setCaseId(illnessCase.getId());
+                complaintList.add(complaint);
+            });
+        }
+        return complaintList;
+    }
+
+    private List<FlaggedCondition> mapFlaggedConditionDtoToFlaggedCondition(List<FlaggedConditionDto> flaggedConditionDtoList, Case illnessCase) {
+        List<FlaggedCondition> flaggedConditionList = new ArrayList<>();
+        if (flaggedConditionDtoList != null) {
+            flaggedConditionDtoList.forEach(flaggedConditionDto -> {
+                FlaggedCondition flaggedCondition = new FlaggedCondition();
+                flaggedCondition.setConditionId(flaggedConditionDto.getConditionId());
+                flaggedCondition.setConditionName(flaggedConditionDto.getConditionName().toUpperCase());
+                flaggedCondition.setVoided(flaggedConditionDto.getVoided());
+                flaggedCondition.setCaseId(illnessCase.getId());
+                flaggedConditionList.add(flaggedCondition);
+            });
+        }
+
+        return flaggedConditionList;
+    }
+
+    private List<Diagnosis> mapDiagnosisDtoToDiagnosis(List<DiagnosisDto> diagnosisDtoList, Case illnessCase) {
+        List<Diagnosis> diagnosisList = new ArrayList<>();
+        if (diagnosisDtoList != null) {
+            diagnosisDtoList.forEach(diagnosisDto -> {
+                LocalDateTime diagnosisDate = diagnosisDto.getDiagnosisDate() == null ? null : LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter);
+                Diagnosis diagnosis = new Diagnosis();
+                diagnosis.setDiagnosisId(diagnosisDto.getDiagnosisId());
+                diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
+                diagnosis.setDiagnosisDate(diagnosisDate);
+                diagnosis.setVoided(diagnosisDto.getVoided());
+                diagnosis.setCaseId(illnessCase.getId());
+                diagnosis.setSystem(diagnosisDto.getSystem());
+                diagnosis.setSystemCode(diagnosis.getSystemCode());
+                diagnosisList.add(diagnosis);
+            });
+        }
+
+        return diagnosisList;
+    }
+    private void updateLabs(List<LabDto> labDtoList, Case illnessCase) {
+        if (labDtoList != null) {
+            List<Lab> labList = new ArrayList<>();
+            labDtoList.forEach(labDto -> {
+                Optional<Lab> optionalLab = labRepository.findByCaseIdAndOrderId(illnessCase.getId(), labDto.getOrderId());
+                if (optionalLab.isPresent()){
+                    Lab lab = optionalLab.get();
+                    lab.setTestResult(labDto.getTestResult());
+                    lab.setTestName(labDto.getTestName());
+                    lab.setLabDate(LocalDateTime.parse(labDto.getLabDate(), formatter));
+                    lab.setVoided(labDto.getVoided());
+                    labList.add(lab);
+                } else {
+                    Lab lab = new Lab();
+                    lab.setLabDate(LocalDateTime.parse(labDto.getLabDate(), formatter));
+                    lab.setOrderId(labDto.getOrderId());
+                    lab.setTestName(labDto.getTestName());
+                    lab.setTestResult(labDto.getTestResult());
+                    lab.setVoided(labDto.getVoided());
+                    lab.setCaseId(illnessCase.getId());
+                    labList.add(lab);
+                }
+            });
+            labRepository.saveAll(labList);
+        }
+    }
+
+    private void updateVaccinations(List<VaccinationDto> vaccinationDtoList, Case illnessCase) {
+        if (vaccinationDtoList != null) {
+            List<Vaccination> vaccinationList = new ArrayList<>();
+            vaccinationDtoList.forEach(vaccinationDto -> {
+                Optional<Vaccination> optionalVaccination = vaccinationRepository.findByCaseIdAndVaccinationId(illnessCase.getId(), vaccinationDto.getVaccinationId());
+                Vaccination vaccination;
+                if (optionalVaccination.isPresent()) {
+                    vaccination = optionalVaccination.get();
+                    vaccination.setVoided(vaccinationDto.getVoided());
+                    vaccination.setVerified(vaccinationDto.getVerified());
+                    vaccination.setVaccination(vaccinationDto.getVaccination());
+                    vaccination.setDoses(vaccinationDto.getDoses());
+                } else {
+                    vaccination = new Vaccination();
+                    vaccination.setCaseId(illnessCase.getId());
+                    vaccination.setVaccinationId(vaccinationDto.getVaccinationId());
+                    vaccination.setVaccination(vaccinationDto.getVaccination());
+                    vaccination.setDoses(vaccinationDto.getDoses());
+                    vaccination.setVerified(vaccinationDto.getVerified());
+                    vaccination.setVoided(vaccinationDto.getVoided());
+                }
+                vaccinationList.add(vaccination);
+            });
+            vaccinationRepository.saveAll(vaccinationList);
+        }
     }
 
     private void updateSubject(SubjectDto subjectDto, Case illnessCase) {
@@ -235,118 +255,131 @@ public class CaseExtractConsumer {
         subjectRepository.save(subject);
     }
     private void updateRiskFactors(List<RiskFactorDto> riskFactorDtoList, Case illnessCase) {
-        List<RiskFactor> riskFactorList = new ArrayList<>();
-        riskFactorDtoList.forEach(riskFactorDto -> {
-            Optional<RiskFactor> optionalRiskFactor = riskFactorRepository.findByCaseIdAndRiskFactorId(illnessCase.getId(), riskFactorDto.getRiskFactorId());
-            RiskFactor riskFactor;
-            if (optionalRiskFactor.isPresent()) {
-                riskFactor = optionalRiskFactor.get();
-            } else {
-                riskFactor = new RiskFactor();
-                riskFactor.setCaseId(illnessCase.getId());
-                riskFactor.setRiskFactorId(riskFactorDto.getRiskFactorId());
-            }
-            riskFactor.setCondition(riskFactorDto.getCondition());
-            riskFactor.setVoided(riskFactorDto.getVoided());
-            riskFactorList.add(riskFactor);
-            riskFactorRepository.saveAll(riskFactorList);
-        });
+        if (riskFactorDtoList != null) {
+            List<RiskFactor> riskFactorList = new ArrayList<>();
+            riskFactorDtoList.forEach(riskFactorDto -> {
+                Optional<RiskFactor> optionalRiskFactor = riskFactorRepository.findByCaseIdAndRiskFactorId(illnessCase.getId(), riskFactorDto.getRiskFactorId());
+                RiskFactor riskFactor;
+                if (optionalRiskFactor.isPresent()) {
+                    riskFactor = optionalRiskFactor.get();
+                } else {
+                    riskFactor = new RiskFactor();
+                    riskFactor.setCaseId(illnessCase.getId());
+                    riskFactor.setRiskFactorId(riskFactorDto.getRiskFactorId());
+                }
+                riskFactor.setCondition(riskFactorDto.getCondition());
+                riskFactor.setVoided(riskFactorDto.getVoided());
+                riskFactorList.add(riskFactor);
+                riskFactorRepository.saveAll(riskFactorList);
+            });
+        }
+
     }
 
     private void updateVitalSigns(List<VitalSignsDto> vitalSignsDtoList, Case illnessCase) {
-        List<VitalSign> vitalSignList = new ArrayList<>();
-        vitalSignsDtoList.forEach(vitalSignsDto -> {
-            Optional<VitalSign> optionalVitalSign = vitalSignRepository.findByCaseIdAndVitalSignId(illnessCase.getId(), vitalSignsDto.getVitalSignId());
-            VitalSign vitalSign;
-            if (optionalVitalSign.isPresent()) {
-                vitalSign = optionalVitalSign.get();
-            } else {
-                vitalSign = new VitalSign();
-                vitalSign.setVitalSignId(vitalSignsDto.getVitalSignId());
-                vitalSign.setCaseId(illnessCase.getId());
-            }
-            vitalSign.setVitalSignDate(LocalDateTime.parse(vitalSignsDto.getVitalSignDate(), formatter));
-            vitalSign.setTemperature(vitalSignsDto.getTemperature());
-            vitalSign.setTemperatureMode(vitalSignsDto.getTemperatureMode());
-            vitalSign.setOxygenSaturation(vitalSignsDto.getOxygenSaturation());
-            vitalSign.setOxygenSaturationMode(vitalSignsDto.getOxygenSaturationMode());
-            vitalSign.setVoided(vitalSignsDto.getVoided());
-            vitalSignList.add(vitalSign);
-        });
-        vitalSignRepository.saveAll(vitalSignList);
+        if (vitalSignsDtoList != null) {
+            List<VitalSign> vitalSignList = new ArrayList<>();
+            vitalSignsDtoList.forEach(vitalSignsDto -> {
+                Optional<VitalSign> optionalVitalSign = vitalSignRepository.findByCaseIdAndVitalSignId(illnessCase.getId(), vitalSignsDto.getVitalSignId());
+                VitalSign vitalSign;
+                if (optionalVitalSign.isPresent()) {
+                    vitalSign = optionalVitalSign.get();
+                } else {
+                    vitalSign = new VitalSign();
+                    vitalSign.setVitalSignId(vitalSignsDto.getVitalSignId());
+                    vitalSign.setCaseId(illnessCase.getId());
+                }
+                vitalSign.setVitalSignDate(LocalDateTime.parse(vitalSignsDto.getVitalSignDate(), formatter));
+                vitalSign.setTemperature(vitalSignsDto.getTemperature());
+                vitalSign.setTemperatureMode(vitalSignsDto.getTemperatureMode());
+                vitalSign.setOxygenSaturation(vitalSignsDto.getOxygenSaturation());
+                vitalSign.setOxygenSaturationMode(vitalSignsDto.getOxygenSaturationMode());
+                vitalSign.setVoided(vitalSignsDto.getVoided());
+                vitalSignList.add(vitalSign);
+            });
+            vitalSignRepository.saveAll(vitalSignList);
+        }
     }
     private void updateComplaints(List<ComplaintDto> complaintDtoList, Case illnessCase) {
-        List<Complaint> complaintList = new ArrayList<>();
-        complaintDtoList.forEach(complaintDto -> {
-            Optional<Complaint> optionalLab = complaintRepository.findByCaseIdAndComplaintId(illnessCase.getId(), complaintDto.getComplaintId());
-            Complaint complaint;
-            if (optionalLab.isPresent()){
-                complaint = optionalLab.get();
-                complaint.setComplaint(complaintDto.getComplaint());
-                complaint.setOnsetDate(LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate());
-                complaint.setVoided(complaintDto.getVoided());
-                complaint.setDuration(complaintDto.getDuration());
-            }else {
-                complaint = new Complaint();
-                complaint.setComplaintId(complaintDto.getComplaintId());
-                complaint.setComplaint(complaintDto.getComplaint());
-                complaint.setCaseId(illnessCase.getId());
-                complaint.setOnsetDate(LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate());
-                complaint.setDuration(complaintDto.getDuration());
-                complaint.setVoided(complaintDto.getVoided());
-            }
-            complaintList.add(complaint);
-        });
-        complaintRepository.saveAll(complaintList);
+        if (complaintDtoList != null) {
+            List<Complaint> complaintList = new ArrayList<>();
+            complaintDtoList.forEach(complaintDto -> {
+                Optional<Complaint> optionalLab = complaintRepository.findByCaseIdAndComplaintId(illnessCase.getId(), complaintDto.getComplaintId());
+                Complaint complaint;
+                if (optionalLab.isPresent()){
+                    complaint = optionalLab.get();
+                    complaint.setComplaint(complaintDto.getComplaint());
+                    complaint.setOnsetDate(LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate());
+                    complaint.setVoided(complaintDto.getVoided());
+                    complaint.setDuration(complaintDto.getDuration());
+                }else {
+                    complaint = new Complaint();
+                    complaint.setComplaintId(complaintDto.getComplaintId());
+                    complaint.setComplaint(complaintDto.getComplaint());
+                    complaint.setCaseId(illnessCase.getId());
+                    complaint.setOnsetDate(LocalDateTime.parse(complaintDto.getOnsetDate(), formatter).toLocalDate());
+                    complaint.setDuration(complaintDto.getDuration());
+                    complaint.setVoided(complaintDto.getVoided());
+                }
+                complaintList.add(complaint);
+            });
+            complaintRepository.saveAll(complaintList);
+        }
+
     }
 
     private void updateFlaggedConditions(List<FlaggedConditionDto> flaggedConditionDtoList, Case illnessCase) {
-        List<FlaggedCondition> flaggedConditionList = new ArrayList<>();
-        flaggedConditionDtoList.forEach(flaggedConditionDto -> {
-            Optional<FlaggedCondition> optionalFlaggedCondition = flaggedConditionRepository
-                    .findByCaseIdAndConditionId(illnessCase.getId(), flaggedConditionDto.getConditionId());
-            FlaggedCondition flaggedCondition;
-            if (optionalFlaggedCondition.isPresent()){
-                flaggedCondition = optionalFlaggedCondition.get();
-                flaggedCondition.setVoided(flaggedConditionDto.getVoided());
-                flaggedCondition.setConditionName(flaggedConditionDto.getConditionName().toUpperCase());
-            } else {
-                flaggedCondition = new FlaggedCondition();
-                flaggedCondition.setCaseId(illnessCase.getId());
-                flaggedCondition.setConditionName(flaggedConditionDto.getConditionName().toUpperCase());
-                flaggedCondition.setConditionId(flaggedConditionDto.getConditionId());
-                flaggedCondition.setVoided(flaggedConditionDto.getVoided());
-            }
-            flaggedConditionList.add(flaggedCondition);
-        });
-        flaggedConditionRepository.saveAll(flaggedConditionList);
+        if (flaggedConditionDtoList != null) {
+            List<FlaggedCondition> flaggedConditionList = new ArrayList<>();
+            flaggedConditionDtoList.forEach(flaggedConditionDto -> {
+                Optional<FlaggedCondition> optionalFlaggedCondition = flaggedConditionRepository
+                        .findByCaseIdAndConditionId(illnessCase.getId(), flaggedConditionDto.getConditionId());
+                FlaggedCondition flaggedCondition;
+                if (optionalFlaggedCondition.isPresent()){
+                    flaggedCondition = optionalFlaggedCondition.get();
+                    flaggedCondition.setVoided(flaggedConditionDto.getVoided());
+                    flaggedCondition.setConditionName(flaggedConditionDto.getConditionName().toUpperCase());
+                } else {
+                    flaggedCondition = new FlaggedCondition();
+                    flaggedCondition.setCaseId(illnessCase.getId());
+                    flaggedCondition.setConditionName(flaggedConditionDto.getConditionName().toUpperCase());
+                    flaggedCondition.setConditionId(flaggedConditionDto.getConditionId());
+                    flaggedCondition.setVoided(flaggedConditionDto.getVoided());
+                }
+                flaggedConditionList.add(flaggedCondition);
+            });
+            flaggedConditionRepository.saveAll(flaggedConditionList);
+        }
+
     }
 
     private void updateDiagnosis(List<DiagnosisDto> diagnosisDtoList, Case illnessCase) {
-        List<Diagnosis> diagnosisList = new ArrayList<>();
-        diagnosisDtoList.forEach(diagnosisDto -> {
-            Optional<Diagnosis> optionalDiagnosis = diagnosisRepository.findByCaseIdAndDiagnosisId(illnessCase.getId(), diagnosisDto.getDiagnosisId());
-            Diagnosis diagnosis;
-            if (optionalDiagnosis.isPresent()){
-                diagnosis = optionalDiagnosis.get();
-                diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
-                diagnosis.setDiagnosisDate(LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter));
-                diagnosis.setVoided(diagnosisDto.getVoided());
-                diagnosis.setSystemCode(diagnosisDto.getSystemCode());
-                diagnosis.setSystem(diagnosisDto.getSystem());
-            }else {
-                diagnosis = new Diagnosis();
-                diagnosis.setDiagnosisId(diagnosisDto.getDiagnosisId());
-                diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
-                diagnosis.setDiagnosisDate(LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter));
-                diagnosis.setVoided(diagnosisDto.getVoided());
-                diagnosis.setCaseId(illnessCase.getId());
-                diagnosis.setSystemCode(diagnosisDto.getSystemCode());
-                diagnosis.setSystem(diagnosisDto.getSystem());
-            }
-            diagnosisList.add(diagnosis);
-        });
-        diagnosisRepository.saveAll(diagnosisList);
+        if (diagnosisDtoList != null) {
+            List<Diagnosis> diagnosisList = new ArrayList<>();
+            diagnosisDtoList.forEach(diagnosisDto -> {
+                Optional<Diagnosis> optionalDiagnosis = diagnosisRepository.findByCaseIdAndDiagnosisId(illnessCase.getId(), diagnosisDto.getDiagnosisId());
+                Diagnosis diagnosis;
+                if (optionalDiagnosis.isPresent()){
+                    diagnosis = optionalDiagnosis.get();
+                    diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
+                    diagnosis.setDiagnosisDate(LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter));
+                    diagnosis.setVoided(diagnosisDto.getVoided());
+                    diagnosis.setSystemCode(diagnosisDto.getSystemCode());
+                    diagnosis.setSystem(diagnosisDto.getSystem());
+                }else {
+                    diagnosis = new Diagnosis();
+                    diagnosis.setDiagnosisId(diagnosisDto.getDiagnosisId());
+                    diagnosis.setDiagnosis(diagnosisDto.getDiagnosis());
+                    diagnosis.setDiagnosisDate(LocalDateTime.parse(diagnosisDto.getDiagnosisDate(), formatter));
+                    diagnosis.setVoided(diagnosisDto.getVoided());
+                    diagnosis.setCaseId(illnessCase.getId());
+                    diagnosis.setSystemCode(diagnosisDto.getSystemCode());
+                    diagnosis.setSystem(diagnosisDto.getSystem());
+                }
+                diagnosisList.add(diagnosis);
+            });
+            diagnosisRepository.saveAll(diagnosisList);
+        }
     }
 
     @KafkaListener(id = "visitListener", topics = "visitTopic", containerFactory = "kafkaListenerContainerFactory")
