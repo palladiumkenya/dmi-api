@@ -1,5 +1,7 @@
 package com.kenyahmis.dmiapi.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kenyahmis.dmiapi.dto.CaseMessageDto;
 import com.kenyahmis.dmiapi.dto.CaseDto;
 import com.kenyahmis.dmiapi.dto.ValidList;
@@ -30,7 +32,7 @@ public class CaseController {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final BatchOperationsRepository batchOperationsRepository;
-    private final Logger LOGGER = LoggerFactory.getLogger(CaseController.class);
+    private final Logger LOG = LoggerFactory.getLogger(CaseController.class);
 
     public CaseController(KafkaTemplate<String, Object> kafkaTemplate, BatchOperationsRepository batchOperationsRepository) {
         this.kafkaTemplate = kafkaTemplate;
@@ -44,7 +46,15 @@ public class CaseController {
         // Create Batch Entry
         BatchOperation batch = new BatchOperation(request.size(), "INCOMPLETE",
                 request.get(0).getHospitalIdNumber(), LocalDateTime.now());
-        LOGGER.info("Working with request from {}", jwt.getClaimAsString("emr"));
+        LOG.info("Working with request from {}", jwt.getClaimAsString("emr"));
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String reqAsString = mapper.writeValueAsString(request);
+            LOG.debug("request body: {}", reqAsString);
+        } catch (JsonProcessingException je) {
+            LOG.error("Failed to parse request", je);
+        }
+
         batchOperationsRepository.save(batch);
         request.forEach((Consumer<? super CaseDto>) r -> kafkaTemplate.send("visitTopic", new CaseMessageDto(batch.getId(), r,  jwt.getClaimAsString("emr"))));
         return new ResponseEntity<>(new BatchAPIResponse("Success", batch.getId().toString()), HttpStatus.OK);
