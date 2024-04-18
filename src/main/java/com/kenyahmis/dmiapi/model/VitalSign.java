@@ -15,7 +15,7 @@ public class VitalSign {
     private UUID id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "case_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private Case illnessCase;
+    private IllnessCase illnessCase;
     @Column(name = "case_id")
     private UUID caseId;
     private LocalDateTime vitalSignDate;

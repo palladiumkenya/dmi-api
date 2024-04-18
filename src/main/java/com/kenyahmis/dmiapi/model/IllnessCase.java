@@ -9,7 +9,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "illness_case")
-public class Case {
+public class IllnessCase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,5 +37,5 @@ public class Case {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime loadDate;
-    public Case() {}
+    public IllnessCase() {}
 }

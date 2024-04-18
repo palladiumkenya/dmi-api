@@ -6,6 +6,8 @@ import com.kenyahmis.dmiapi.repository.*;
 import com.kenyahmis.dmiapi.service.BatchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +52,7 @@ public class CaseExtractConsumer {
         this.flaggedConditionRepository = flaggedConditionRepository;
     }
 
-    private List<RiskFactor> mapRiskFactorDtoToRiskFactor(List<RiskFactorDto> riskFactorDtoList, Case illnessCase) {
+    private List<RiskFactor> mapRiskFactorDtoToRiskFactor(Set<RiskFactorDto> riskFactorDtoList, IllnessCase illnessCase) {
         List<RiskFactor> riskFactorList = new ArrayList<>();
         if (riskFactorDtoList != null) {
             riskFactorDtoList.forEach(riskFactorDto -> {
@@ -77,7 +79,7 @@ public class CaseExtractConsumer {
         subject.setSubCounty(subjectDto.getSubCounty());
         return subject;
     }
-    private List<VitalSign> mapVitalSignDtoToVitalSign(List<VitalSignsDto> vitalSignsDtoList, Case illnessCase) {
+    private List<VitalSign> mapVitalSignDtoToVitalSign(Set<VitalSignsDto> vitalSignsDtoList, IllnessCase illnessCase) {
         List<VitalSign> vitalSignList = new ArrayList<>();
         if (vitalSignsDtoList != null) {
             vitalSignsDtoList.forEach(vitalSignsDto -> {
@@ -96,7 +98,7 @@ public class CaseExtractConsumer {
         return vitalSignList;
     }
 
-    private List<Vaccination> mapVaccinationDtoToVaccination(List<VaccinationDto> vaccinationDtoList, Case illnessCase) {
+    private List<Vaccination> mapVaccinationDtoToVaccination(Set<VaccinationDto> vaccinationDtoList, IllnessCase illnessCase) {
         List<Vaccination> vaccinationList = new ArrayList<>();
         if (vaccinationDtoList != null) {
             vaccinationDtoList.forEach(vaccinationDto -> {
@@ -112,7 +114,7 @@ public class CaseExtractConsumer {
         }
         return vaccinationList;
     }
-    private List<Lab> mapLabDtoToLab(List<LabDto> labDtoList, Case illnessCase)  {
+    private List<Lab> mapLabDtoToLab(Set<LabDto> labDtoList, IllnessCase illnessCase)  {
         List<Lab> labList = new ArrayList<>();
         if (labDtoList != null) {
             labDtoList.forEach(labDto->{
@@ -130,7 +132,7 @@ public class CaseExtractConsumer {
         return labList;
     }
 
-    private List<Complaint> mapComplaintDtoToComplaint(List<ComplaintDto> complaintDtoList, Case illnessCase) {
+    private List<Complaint> mapComplaintDtoToComplaint(Set<ComplaintDto> complaintDtoList, IllnessCase illnessCase) {
         List<Complaint> complaintList = new ArrayList<>();
         if (complaintDtoList != null) {
             complaintDtoList.forEach(complaintDto -> {
@@ -148,7 +150,7 @@ public class CaseExtractConsumer {
         return complaintList;
     }
 
-    private List<FlaggedCondition> mapFlaggedConditionDtoToFlaggedCondition(List<FlaggedConditionDto> flaggedConditionDtoList, Case illnessCase) {
+    private List<FlaggedCondition> mapFlaggedConditionDtoToFlaggedCondition(Set<FlaggedConditionDto> flaggedConditionDtoList, IllnessCase illnessCase) {
         List<FlaggedCondition> flaggedConditionList = new ArrayList<>();
         if (flaggedConditionDtoList != null) {
             flaggedConditionDtoList.forEach(flaggedConditionDto -> {
@@ -164,7 +166,7 @@ public class CaseExtractConsumer {
         return flaggedConditionList;
     }
 
-    private List<Diagnosis> mapDiagnosisDtoToDiagnosis(List<DiagnosisDto> diagnosisDtoList, Case illnessCase) {
+    private List<Diagnosis> mapDiagnosisDtoToDiagnosis(Set<DiagnosisDto> diagnosisDtoList, IllnessCase illnessCase) {
         List<Diagnosis> diagnosisList = new ArrayList<>();
         if (diagnosisDtoList != null) {
             diagnosisDtoList.forEach(diagnosisDto -> {
@@ -183,7 +185,7 @@ public class CaseExtractConsumer {
 
         return diagnosisList;
     }
-    private void updateLabs(List<LabDto> labDtoList, Case illnessCase) {
+    private void updateLabs(Set<LabDto> labDtoList, IllnessCase illnessCase) {
         if (labDtoList != null) {
             List<Lab> labList = new ArrayList<>();
             labDtoList.forEach(labDto -> {
@@ -210,7 +212,7 @@ public class CaseExtractConsumer {
         }
     }
 
-    private void updateVaccinations(List<VaccinationDto> vaccinationDtoList, Case illnessCase) {
+    private void updateVaccinations(Set<VaccinationDto> vaccinationDtoList, IllnessCase illnessCase) {
         if (vaccinationDtoList != null) {
             List<Vaccination> vaccinationList = new ArrayList<>();
             vaccinationDtoList.forEach(vaccinationDto -> {
@@ -237,7 +239,7 @@ public class CaseExtractConsumer {
         }
     }
 
-    private void updateSubject(SubjectDto subjectDto, Case illnessCase) {
+    private void updateSubject(SubjectDto subjectDto, IllnessCase illnessCase) {
         Optional<Subject> optionalSubject = subjectRepository.findById(illnessCase.getSubjectId());
         LocalDateTime dob = subjectDto.getDateOfBirth() == null ? null : LocalDateTime.parse(subjectDto.getDateOfBirth(), formatter);
         Subject subject;
@@ -255,7 +257,7 @@ public class CaseExtractConsumer {
         subject.setSubCounty(subjectDto.getSubCounty());
         subjectRepository.save(subject);
     }
-    private void updateRiskFactors(List<RiskFactorDto> riskFactorDtoList, Case illnessCase) {
+    private void updateRiskFactors(Set<RiskFactorDto> riskFactorDtoList, IllnessCase illnessCase) {
         if (riskFactorDtoList != null) {
             List<RiskFactor> riskFactorList = new ArrayList<>();
             riskFactorDtoList.forEach(riskFactorDto -> {
@@ -277,7 +279,7 @@ public class CaseExtractConsumer {
 
     }
 
-    private void updateVitalSigns(List<VitalSignsDto> vitalSignsDtoList, Case illnessCase) {
+    private void updateVitalSigns(Set<VitalSignsDto> vitalSignsDtoList, IllnessCase illnessCase) {
         if (vitalSignsDtoList != null) {
             List<VitalSign> vitalSignList = new ArrayList<>();
             vitalSignsDtoList.forEach(vitalSignsDto -> {
@@ -302,7 +304,7 @@ public class CaseExtractConsumer {
             vitalSignRepository.saveAll(vitalSignList);
         }
     }
-    private void updateComplaints(List<ComplaintDto> complaintDtoList, Case illnessCase) {
+    private void updateComplaints(Set<ComplaintDto> complaintDtoList, IllnessCase illnessCase) {
         if (complaintDtoList != null) {
             List<Complaint> complaintList = new ArrayList<>();
             complaintDtoList.forEach(complaintDto -> {
@@ -330,7 +332,7 @@ public class CaseExtractConsumer {
         }
     }
 
-    private void updateFlaggedConditions(List<FlaggedConditionDto> flaggedConditionDtoList, Case illnessCase) {
+    private void updateFlaggedConditions(Set<FlaggedConditionDto> flaggedConditionDtoList, IllnessCase illnessCase) {
         if (flaggedConditionDtoList != null) {
             List<FlaggedCondition> flaggedConditionList = new ArrayList<>();
             flaggedConditionDtoList.forEach(flaggedConditionDto -> {
@@ -355,7 +357,7 @@ public class CaseExtractConsumer {
 
     }
 
-    private void updateDiagnosis(List<DiagnosisDto> diagnosisDtoList, Case illnessCase) {
+    private void updateDiagnosis(Set<DiagnosisDto> diagnosisDtoList, IllnessCase illnessCase) {
         if (diagnosisDtoList != null) {
             List<Diagnosis> diagnosisList = new ArrayList<>();
             diagnosisDtoList.forEach(diagnosisDto -> {
@@ -390,8 +392,8 @@ public class CaseExtractConsumer {
         Set<UUID> batchIdList = new HashSet<>();
         messages.forEach(caseMessageDto -> {
             CaseDto m = caseMessageDto.getCaseDto();
-            Optional<Case>  optionalRespiratoryIllnessCase = caseRepository.findByVisitUniqueIdAndMflCode(m.getCaseUniqueId(), m.getHospitalIdNumber());
-            Case aCase;
+            Optional<IllnessCase>  optionalRespiratoryIllnessCase = caseRepository.findByVisitUniqueIdAndMflCode(m.getCaseUniqueId(), m.getHospitalIdNumber());
+            IllnessCase aCase;
             LocalDate admissionDate = m.getAdmissionDate() == null ? null : LocalDateTime.parse(m.getAdmissionDate(), formatter).toLocalDate();
             LocalDate outpatientDate = m.getOutpatientDate() == null ? null : LocalDateTime.parse(m.getOutpatientDate(), formatter).toLocalDate();
             LocalDateTime finalOutcomeDate = m.getFinalOutcomeDate() == null ? null : LocalDateTime.parse(m.getFinalOutcomeDate(), formatter);
@@ -443,7 +445,7 @@ public class CaseExtractConsumer {
                 if (emr.isPresent()) {
                     emrId = emr.get().getId();
                 }
-                aCase = new Case();
+                aCase = new IllnessCase();
                 aCase.setBatchId(caseMessageDto.getBatchId());
                 aCase.setEmrId(emrId);
                 aCase.setStatus(m.getStatus());
@@ -456,8 +458,20 @@ public class CaseExtractConsumer {
                 aCase.setCreatedAt(createdAt);
                 aCase.setUpdatedAt(updatedAt);
                 aCase.setLoadDate(LocalDateTime.now());
-                Subject subject = subjectRepository.save(mapSubjectDtoToSubject(m.getSubject()));
-                aCase.setSubjectId(subject.getId());
+
+                // resolve subject
+                Page<SubjectSummary> subjectPage = subjectRepository
+                        .findByPatientUniqueIdAndSiteCode(m.getSubject().getPatientUniqueId(), m.getHospitalIdNumber(),
+                                Pageable.ofSize(1));
+                if (!subjectPage.isEmpty()) {
+                    UUID subjectId = subjectPage.getContent().get(0).getSubjectId();
+                    LOGGER.info("Found existing subjects {} resolved with {}",subjectPage.getSize(), subjectId);
+                    aCase.setSubjectId(subjectId);
+                } else {
+                    Subject subject = subjectRepository.save(mapSubjectDtoToSubject(m.getSubject()));
+                    aCase.setSubjectId(subject.getId());
+                }
+
                 caseRepository.save(aCase);
                 labRepository.saveAll(mapLabDtoToLab(m.getLabDtoList(), aCase));
                 complaintRepository.saveAll(mapComplaintDtoToComplaint(m.getComplaintDtoList(), aCase));
