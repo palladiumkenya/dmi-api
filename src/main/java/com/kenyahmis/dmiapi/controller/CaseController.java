@@ -42,7 +42,7 @@ public class CaseController {
 
     @Operation(summary = "Submit a case report. The API creates a case report in the staging area and updates it if an exising one is found")
     @PostMapping(value = "/case/batch")
-    private ResponseEntity<?> addBatchCases(@RequestBody @Valid @NotEmpty ValidList<CaseDto> request,
+    private ResponseEntity<?> addBatchCases(@RequestBody @Valid ValidList<CaseDto> request,
                                             @AuthenticationPrincipal Jwt jwt) {
         // Create Batch Entry
         if (request.isEmpty()) {
