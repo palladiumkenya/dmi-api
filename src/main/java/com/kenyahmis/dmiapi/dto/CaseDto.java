@@ -51,7 +51,8 @@ public class CaseDto {
     @NotNull
     @Valid
     private SubjectDto subject;
-    @NotNull
+    @NotNull(message = "Flagged conditions cannot be null")
+    @NotEmpty(message = "Flagged conditions cannot be empty")
     @Valid
     @JsonProperty("flaggedConditions")
     private Set<FlaggedConditionDto> flaggedConditionDtoList = new HashSet<>();
