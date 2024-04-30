@@ -178,7 +178,7 @@ public class CaseExtractConsumer {
                 diagnosis.setVoided(diagnosisDto.getVoided());
                 diagnosis.setCaseId(illnessCase.getId());
                 diagnosis.setSystem(diagnosisDto.getSystem());
-                diagnosis.setSystemCode(diagnosis.getSystemCode());
+                diagnosis.setSystemCode(diagnosisDto.getSystemCode());
                 diagnosisList.add(diagnosis);
             });
         }
