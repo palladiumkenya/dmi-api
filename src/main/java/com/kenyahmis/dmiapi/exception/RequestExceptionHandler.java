@@ -40,9 +40,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private void logErrorMessage(Map<String, String> errors) {
         LOG.error("==================START Validation errors==================");
-        for (String field : errors.keySet()) {
-            LOG.error("{}: {}", field, errors.get(field));
-        }
+        errors.forEach((key, value) -> LOG.error("{}: {}", key, errors.get(value)));
         LOG.error("==================END Validation errors==================");
     }
 
