@@ -1,6 +1,8 @@
 package com.kenyahmis.dmiapi.exception;
 
 import com.kenyahmis.dmiapi.model.APIErrorResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -19,6 +21,7 @@ import java.util.Map;
 
 @ControllerAdvice
 public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
+    private final Logger LOG = LoggerFactory.getLogger(RequestExceptionHandler.class);
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
@@ -30,8 +33,17 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
+        logErrorMessage(errors);
         return new ResponseEntity<>(new APIErrorResponse<>(errors, "Request validation error"),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    private void logErrorMessage(Map<String, String> errors) {
+        LOG.error("==================START Validation errors==================");
+        for (String field : errors.keySet()) {
+            LOG.error("{}: {}", field, errors.get(field));
+        }
+        LOG.error("==================END Validation errors==================");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
