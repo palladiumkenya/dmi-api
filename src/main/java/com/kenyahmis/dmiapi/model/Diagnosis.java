@@ -1,5 +1,6 @@
 package com.kenyahmis.dmiapi.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ public class Diagnosis {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "case_id", referencedColumnName = "id", insertable = false, updatable = false)
     private IllnessCase illnessCase;

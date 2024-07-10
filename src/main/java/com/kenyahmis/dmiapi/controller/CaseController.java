@@ -6,25 +6,25 @@ import com.kenyahmis.dmiapi.dto.CaseMessageDto;
 import com.kenyahmis.dmiapi.dto.CaseDto;
 import com.kenyahmis.dmiapi.dto.ValidList;
 import com.kenyahmis.dmiapi.model.APIErrorResponse;
+import com.kenyahmis.dmiapi.model.APIResponse;
 import com.kenyahmis.dmiapi.model.BatchAPIResponse;
 import com.kenyahmis.dmiapi.model.BatchOperation;
 import com.kenyahmis.dmiapi.repository.BatchOperationsRepository;
+import com.kenyahmis.dmiapi.service.CaseReportService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 @RestController
@@ -33,11 +33,24 @@ public class CaseController {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final BatchOperationsRepository batchOperationsRepository;
+    private final CaseReportService caseReportService;
     private final Logger LOG = LoggerFactory.getLogger(CaseController.class);
 
-    public CaseController(KafkaTemplate<String, Object> kafkaTemplate, BatchOperationsRepository batchOperationsRepository) {
+    public CaseController(KafkaTemplate<String, Object> kafkaTemplate, BatchOperationsRepository batchOperationsRepository,
+                          CaseReportService caseReportService) {
         this.kafkaTemplate = kafkaTemplate;
         this.batchOperationsRepository = batchOperationsRepository;
+        this.caseReportService = caseReportService;
+    }
+
+    @GetMapping(value = "/case")
+    private ResponseEntity<?> getCases() {
+        return new ResponseEntity<>(new APIResponse<>(caseReportService.getReports(), "Empty Request body"), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/case/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    private String getCasesReport(@PathVariable String uuid) {
+        return caseReportService.getCaseReport(UUID.fromString(uuid));
     }
 
     @Operation(summary = "Submit a case report. The API creates a case report in the staging area and updates it if an exising one is found")

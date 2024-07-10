@@ -1,5 +1,6 @@
 package com.kenyahmis.dmiapi.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
@@ -16,8 +17,11 @@ public class IllnessCase {
     private UUID id;
     @JoinColumn(name = "batchId", referencedColumnName = "id")
     private UUID batchId;
-    @JoinColumn(name = "subjectId", referencedColumnName = "id")
+    @Column(name = "subjectId")
     private UUID subjectId;
+    @ManyToOne
+    @JoinColumn(name = "subjectId", referencedColumnName = "id", insertable = false, updatable = false)
+    private Subject subject;
     @JoinColumn(name = "emrId", referencedColumnName = "id")
     private UUID emrId;
     private String visitUniqueId;
@@ -28,10 +32,13 @@ public class IllnessCase {
     private String status;
     private String finalOutcome;
     private LocalDateTime finalOutcomeDate;
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
     private List<Complaint> complaints;
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
     private List<Lab> labs;
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
     private List<Diagnosis> diagnosis;
     private LocalDateTime createdAt;
