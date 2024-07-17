@@ -83,9 +83,10 @@ public class CaseExtractConsumer {
         List<VitalSign> vitalSignList = new ArrayList<>();
         if (vitalSignsDtoList != null) {
             vitalSignsDtoList.forEach(vitalSignsDto -> {
+                LocalDateTime vitalSignDate = vitalSignsDto.getVitalSignDate() == null ? null : LocalDateTime.parse(vitalSignsDto.getVitalSignDate(), formatter);
                 VitalSign vitalSign = new VitalSign();
                 vitalSign.setVitalSignId(vitalSignsDto.getVitalSignId());
-                vitalSign.setVitalSignDate(LocalDateTime.parse(vitalSignsDto.getVitalSignDate(), formatter));
+                vitalSign.setVitalSignDate(vitalSignDate);
                 vitalSign.setCaseId(illnessCase.getId());
                 vitalSign.setTemperature(vitalSignsDto.getTemperature());
                 vitalSign.setTemperatureMode(vitalSignsDto.getTemperatureMode());
@@ -190,16 +191,17 @@ public class CaseExtractConsumer {
             List<Lab> labList = new ArrayList<>();
             labDtoList.forEach(labDto -> {
                 Optional<Lab> optionalLab = labRepository.findByCaseIdAndOrderId(illnessCase.getId(), labDto.getOrderId());
+                LocalDateTime labDate =  labDto.getLabDate() == null ? null : LocalDateTime.parse(labDto.getLabDate(), formatter);
                 if (optionalLab.isPresent()){
                     Lab lab = optionalLab.get();
                     lab.setTestResult(labDto.getTestResult());
                     lab.setTestName(labDto.getTestName());
-                    lab.setLabDate(LocalDateTime.parse(labDto.getLabDate(), formatter));
+                    lab.setLabDate(labDate);
                     lab.setVoided(labDto.getVoided());
                     labList.add(lab);
                 } else {
                     Lab lab = new Lab();
-                    lab.setLabDate(LocalDateTime.parse(labDto.getLabDate(), formatter));
+                    lab.setLabDate(labDate);
                     lab.setOrderId(labDto.getOrderId());
                     lab.setTestName(labDto.getTestName());
                     lab.setTestResult(labDto.getTestResult());
