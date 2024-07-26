@@ -15,10 +15,8 @@ public class Diagnosis {
     private UUID id;
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "case_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "case_id", referencedColumnName = "id")
     private IllnessCase illnessCase;
-    @Column(name = "case_id")
-    private UUID caseId;
     private String diagnosisId;
     private LocalDateTime diagnosisDate;
     private String diagnosis;
@@ -43,14 +41,6 @@ public class Diagnosis {
 
     public void setIllnessCase(IllnessCase illnessCase) {
         this.illnessCase = illnessCase;
-    }
-
-    public UUID getCaseId() {
-        return caseId;
-    }
-
-    public void setCaseId(UUID caseId) {
-        this.caseId = caseId;
     }
 
     public String getDiagnosisId() {

@@ -16,10 +16,8 @@ public class Lab {
     private UUID id;
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "case_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "case_id", referencedColumnName = "id")
     private IllnessCase illnessCase;
-    @Column(name = "case_id")
-    private UUID caseId;
     private String orderId;
     private String testName;
     private String unit;

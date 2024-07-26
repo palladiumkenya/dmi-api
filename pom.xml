@@ -98,7 +98,6 @@
             <artifactId>hapi-fhir-structures-r4</artifactId>
             <version>${hapi.version}</version>
         </dependency>
-
     </dependencies>
 
     <dependencyManagement>

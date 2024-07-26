@@ -1,5 +1,6 @@
 package com.kenyahmis.dmiapi.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -17,10 +18,8 @@ public class IllnessCase {
     private UUID id;
     @JoinColumn(name = "batchId", referencedColumnName = "id")
     private UUID batchId;
-    @Column(name = "subjectId")
-    private UUID subjectId;
-    @ManyToOne
-    @JoinColumn(name = "subjectId", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "subjectId", referencedColumnName = "id")
     private Subject subject;
     @JoinColumn(name = "emrId", referencedColumnName = "id")
     private UUID emrId;
@@ -35,6 +34,18 @@ public class IllnessCase {
     @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
     private List<Complaint> complaints;
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
+    private List<RiskFactor> riskFactors;
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
+    private List<FlaggedCondition> flaggedConditions;
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
+    private List<Vaccination> vaccinations;
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
+    private List<VitalSign> vitalSigns;
     @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
     private List<Lab> labs;
