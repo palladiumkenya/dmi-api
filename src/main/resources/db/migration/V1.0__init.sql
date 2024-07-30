@@ -1,4 +1,4 @@
-
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS public.batch_operations (
                                          id uuid NOT NULL DEFAULT uuid_generate_v4(),
                                          input_count int4 NULL,
