@@ -55,22 +55,22 @@ public class CaseDto {
     @NotEmpty(message = "Flagged conditions cannot be empty")
     @Valid
     @JsonProperty("flaggedConditions")
-    private Set<FlaggedConditionDto> flaggedConditionDtoList = new HashSet<>();
+    private Set<FlaggedConditionDto> flaggedConditions = new HashSet<>();
     @Valid
     @JsonProperty("vitalSigns")
     private Set<VitalSignsDto> vitalSigns = new HashSet<>();
     @Valid
     @JsonProperty("riskFactors")
-    private Set<RiskFactorDto> riskFactorDtoList = new HashSet<>();
+    private Set<RiskFactorDto> riskFactors = new HashSet<>();
     @Valid
     @JsonProperty("vaccinations")
-    private Set<VaccinationDto> vaccinationDtoList = new HashSet<>();
+    private Set<VaccinationDto> vaccinations = new HashSet<>();
     @Valid
     private Set<DiagnosisDto> diagnosis = new HashSet<>();
     @JsonProperty("complaints")
     @Valid
-    private Set<ComplaintDto> complaintDtoList = new HashSet<>();
+    private Set<ComplaintDto> complaints = new HashSet<>();
     @JsonProperty("lab")
     @Valid
-    private Set<LabDto> labDtoList = new HashSet<>();
+    private Set<LabDto> labs = new HashSet<>();
 }

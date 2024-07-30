@@ -1,5 +1,6 @@
 package com.kenyahmis.dmiapi.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,11 +13,10 @@ public class Vaccination {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "case_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "case_id", referencedColumnName = "id")
     private IllnessCase illnessCase;
-    @Column(name = "case_id")
-    private UUID caseId;
     private String vaccinationId;
     private String vaccination;
     private Integer doses;
