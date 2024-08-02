@@ -18,7 +18,7 @@ public class IllnessCase {
     private UUID id;
     @JoinColumn(name = "batchId", referencedColumnName = "id")
     private UUID batchId;
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "subjectId", referencedColumnName = "id")
     private Subject subject;
     @JoinColumn(name = "emrId", referencedColumnName = "id")
