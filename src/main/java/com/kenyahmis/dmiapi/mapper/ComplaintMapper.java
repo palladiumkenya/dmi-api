@@ -2,6 +2,7 @@ package com.kenyahmis.dmiapi.mapper;
 
 import com.kenyahmis.dmiapi.dto.ComplaintDto;
 import com.kenyahmis.dmiapi.model.Complaint;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -13,6 +14,8 @@ public interface ComplaintMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "illnessCase", ignore = true)
     Complaint complaintDtoToComplaint(ComplaintDto complaintDto);
+    @InheritConfiguration
     ComplaintDto complaintToComplaintDto(Complaint complaint);
+
     List<Complaint> complaintDtoToComplaint(List<ComplaintDto> complaintDto);
 }
