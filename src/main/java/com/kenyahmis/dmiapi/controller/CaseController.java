@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,8 +45,10 @@ public class CaseController {
     }
 
     @GetMapping(value = "/case")
-    private ResponseEntity<?> getCases() {
-        return new ResponseEntity<>(new APIResponse<>(caseReportService.getReports(), "Empty Request body"), HttpStatus.OK);
+    private ResponseEntity<?> getCases(@RequestParam(name = "startDate", required = false) String startDate,
+                                       @RequestParam(name = "endDate", required = false) String endDate,
+                                       Pageable pageable) {
+        return new ResponseEntity<>(new APIResponse<>(caseReportService.getReports(startDate, endDate, pageable), "Success"), HttpStatus.OK);
     }
 
     @GetMapping(value = "/case/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)

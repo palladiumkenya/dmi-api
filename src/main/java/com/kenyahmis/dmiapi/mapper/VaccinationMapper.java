@@ -2,6 +2,7 @@ package com.kenyahmis.dmiapi.mapper;
 
 import com.kenyahmis.dmiapi.dto.VaccinationDto;
 import com.kenyahmis.dmiapi.model.Vaccination;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -12,6 +13,7 @@ public interface VaccinationMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "illnessCase", ignore = true)
     Vaccination vaccinationDtoToVaccination(VaccinationDto dto);
+    @InheritConfiguration
     VaccinationDto vaccinationToVaccinationDto(Vaccination entity);
     List<Vaccination> vaccinationDtoToVaccination(List<VaccinationDto> dto);
 }

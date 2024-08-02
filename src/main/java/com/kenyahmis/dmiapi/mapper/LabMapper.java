@@ -2,6 +2,7 @@ package com.kenyahmis.dmiapi.mapper;
 
 import com.kenyahmis.dmiapi.dto.LabDto;
 import com.kenyahmis.dmiapi.model.Lab;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -13,6 +14,7 @@ public interface LabMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "illnessCase", ignore = true)
     Lab labDtoToLab(LabDto labDto);
+    @InheritConfiguration
     LabDto labToLabDto(Lab lab);
     List<Lab> labDtoToLab(List<LabDto> labDto);
 }

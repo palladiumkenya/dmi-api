@@ -2,12 +2,10 @@ package com.kenyahmis.dmiapi.mapper;
 
 import com.kenyahmis.dmiapi.dto.CaseDto;
 import com.kenyahmis.dmiapi.model.IllnessCase;
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Mapper(uses = {ComplaintMapper.class, DiagnosisMapper.class, FlaggedConditionMapper.class, LabMapper.class,
         RiskFactorMapper.class, SubjectMapper.class, VaccinationMapper.class, VitalSignMapper.class}
@@ -40,6 +38,7 @@ public abstract class CaseMapper {
 
     @Mapping(source = "illnessCase.visitUniqueId", target = "caseUniqueId")
     @Mapping(source = "illnessCase.mflCode", target = "hospitalIdNumber")
+    @InheritInverseConfiguration
     public abstract CaseDto caseToCaseDto(IllnessCase illnessCase);
 
     @AfterMapping
@@ -59,4 +58,6 @@ public abstract class CaseMapper {
         illnessCase.getRiskFactors().forEach(riskFactor -> riskFactor.setIllnessCase(sourceOfIds));
         illnessCase.setLoadDate(LocalDateTime.now());
     }
+    public abstract List<CaseDto> caseToCaseDto(List<IllnessCase> illnessCases);
+
 }

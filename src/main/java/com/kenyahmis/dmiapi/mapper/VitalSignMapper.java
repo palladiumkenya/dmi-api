@@ -2,6 +2,7 @@ package com.kenyahmis.dmiapi.mapper;
 
 import com.kenyahmis.dmiapi.dto.VitalSignsDto;
 import com.kenyahmis.dmiapi.model.VitalSign;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import java.util.List;
@@ -12,6 +13,7 @@ public interface VitalSignMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "illnessCase", ignore = true)
     VitalSign vitalSignDtoToVitalSign(VitalSignsDto dto);
+    @InheritConfiguration
     VitalSignsDto vitalSignToVitalSignsDto(VitalSign vitalSign);
     List<VitalSign> vitalSignsToVitalSigns(List<VitalSignsDto> dtos);
 }

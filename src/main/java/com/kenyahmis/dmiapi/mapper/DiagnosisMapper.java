@@ -2,6 +2,7 @@ package com.kenyahmis.dmiapi.mapper;
 
 import com.kenyahmis.dmiapi.dto.DiagnosisDto;
 import com.kenyahmis.dmiapi.model.Diagnosis;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -14,6 +15,7 @@ public interface DiagnosisMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "illnessCase", ignore = true)
     Diagnosis diagnosisDtoToDiagnosis(DiagnosisDto diagnosisDto);
+    @InheritConfiguration
     DiagnosisDto diagnosisToDiagnosisDto(Diagnosis diagnosis);
     List<Diagnosis> diagnosisDtoToDiagnosis(List<DiagnosisDto> diagnosisDto);
 }
