@@ -1,6 +1,7 @@
 package com.kenyahmis.dmiapi.service;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.TemporalPrecisionEnum;
 import ca.uhn.fhir.parser.IParser;
 import com.kenyahmis.dmiapi.dto.CaseDto;
 import com.kenyahmis.dmiapi.mapper.CaseMapper;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,6 +61,7 @@ public class CaseReportService {
             composition.setId(caseId.toString());
 //            composition.setIdentifier(new Identifier().setValue());
             composition.setStatus(Composition.CompositionStatus.FINAL);
+            Extension extension = new Extension();
 
             CodeableConcept compositionType = new CodeableConcept();
             Coding compositionTypeCoding = new Coding();
@@ -93,7 +96,7 @@ public class CaseReportService {
 
 
 
-            // Condition resource
+            // Condition resource TODO do the same for flagged condition
             Condition condition = new Condition();
             condition.setId(caseId.toString());
             DateType dateType = new DateType(Date.valueOf(LocalDate.now()));
@@ -110,7 +113,70 @@ public class CaseReportService {
             condition.setCategory(List.of(conditionType));
             Bundle.BundleEntryComponent complaintEntry = new Bundle.BundleEntryComponent();
             complaintEntry.setResource(condition);
-            bundle.setEntry(List.of(compositionEntry, complaintEntry));
+
+            // immunization details
+            Immunization immunization = new Immunization();
+            immunization.setId(caseId.toString());
+            immunization.setStatus(Immunization.ImmunizationStatus.COMPLETED);
+
+            // vaccine code
+            CodeableConcept vaccineCodeConcept = new CodeableConcept();
+            Coding vaccineCode = new Coding();
+            vaccineCode.setSystem("http://hl7.org/fhir/sid/cvx");
+            vaccineCode.setCode("56");
+            vaccineCode.setDisplay("Dengue Fever");
+            vaccineCodeConcept.setCoding(List.of(vaccineCode));
+            vaccineCode.setDisplay("");
+            vaccineCodeConcept.setText("");
+            immunization.setVaccineCode(vaccineCodeConcept);
+//            immunization.setOccurrence(DateType.today());
+            Extension doseExtension = new Extension();
+            doseExtension.setValue(new StringType("2"));
+            doseExtension.setUrl("http://example.com/fhir/StructureDefinition/my-extension");
+            immunization.setExtension(List.of(doseExtension));
+            Bundle.BundleEntryComponent immunizationEntry = new Bundle.BundleEntryComponent();
+            immunizationEntry.setResource(immunization);
+
+            // vital signs (temperature, respiratory rate, oxygen saturation)
+            Bundle.BundleEntryComponent temperatureEntry = new Bundle.BundleEntryComponent();
+            Observation temperatureObservation = new Observation();
+            temperatureObservation.setId(caseId.toString());
+            temperatureObservation.setStatus(Observation.ObservationStatus.FINAL);
+//            temperatureObservation.setCategory();
+//            temperatureObservation.setCode();
+
+            System.out.println("================================");
+            System.out.println(Date.valueOf(LocalDate.now()));
+//            temperatureObservation.setEffective();
+//            temperatureObservation.setEffective(DateTimeType.today());
+            temperatureObservation.setEffective(DateTimeType.today());
+            DateTimeType dateTimeType = new DateTimeType(Date.valueOf(LocalDate.now()));
+            dateTimeType.setPrecision(TemporalPrecisionEnum.DAY);
+            temperatureObservation.setEffective(dateTimeType);
+
+//            temperatureObservation.setEffective(new DateType(Date.valueOf(LocalDate.now())));
+//            Quantity temperatureQuantity = new Quantity();
+//            temperatureQuantity.setValue(39.0);
+//            temperatureQuantity.setUnit("celsius");
+//            temperatureQuantity.setSystem("http://loinc.org");
+//            temperatureQuantity.setCode("celsius");
+
+            StringType stringType = new StringType();
+            stringType.setValue("Sample value");
+            temperatureObservation.setValue(stringType);
+//            temperatureObservation.setValue(temperatureQuantity);
+            temperatureEntry.setResource(temperatureObservation);
+
+            // lab results
+            Observation labResult = new Observation();
+            labResult.setId(caseId.toString());
+            labResult.setStatus(Observation.ObservationStatus.FINAL);
+//            labResult.setCategory();
+//            labResult.setCode();
+//            labResult.setEffective();
+//
+
+            bundle.setEntry(List.of(compositionEntry, complaintEntry, immunizationEntry,temperatureEntry));
             response =  parser.encodeResourceToString(bundle);
             LOG.info("Response: {}", response);
         }
