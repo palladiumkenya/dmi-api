@@ -30,7 +30,7 @@ abstract class LabMapper {
         labResult.setValue(new StringType(lab.getTestResult()));
         CodeableConcept labCode = new CodeableConcept();
         Coding labCodeCoding = new Coding();
-        labCodeCoding.setSystem("http://loinc.org");
+        labCodeCoding.setSystem("http://staging.org/lab");
         labCodeCoding.setDisplay(lab.getTestResult());
         labCode.setCoding(List.of(labCodeCoding));
         labResult.setCode(labCode);

@@ -51,7 +51,14 @@ public class CaseController {
         return new ResponseEntity<>(new APIResponse<>(caseReportService.getReports(startDate, endDate, pageable), "Success"), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/case/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/fhir/case", produces = MediaType.APPLICATION_JSON_VALUE)
+    private String getCaseReports(@RequestParam(name = "startDate", required = false) String startDate,
+                                       @RequestParam(name = "endDate", required = false) String endDate,
+                                       Pageable pageable) {
+        return caseReportService.getCaseReports(startDate, endDate, pageable);
+    }
+
+    @GetMapping(value = "/fhir/case/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     private String getCasesReport(@PathVariable String uuid) {
         return caseReportService.getCaseReport(UUID.fromString(uuid));
     }

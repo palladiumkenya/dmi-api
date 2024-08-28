@@ -35,7 +35,7 @@ abstract class SubjectMapper {
         }
         // nupi & patient facility id
         Identifier nupi = new Identifier();
-        nupi.setSystem("http://moh.org/nupi");
+        nupi.setSystem("http://staging.org/nupi");
         nupi.setValue(subject.getNupi());
         patient.setIdentifier(List.of(nupi));
 

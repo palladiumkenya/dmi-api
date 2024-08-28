@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -35,7 +36,6 @@ public class CaseReportService {
     }
 
     public String getCaseReport(UUID caseId) {
-
         String response = null;
         IllnessCase illnessCase = caseRepository.findById(caseId).orElse(null);
         if (illnessCase != null) {
@@ -46,5 +46,17 @@ public class CaseReportService {
             LOG.info("Response: {}", response);
         }
        return response;
+    }
+
+    public String getCaseReports(String startDate, String endDate, Pageable pageable) {
+        List<IllnessCase> cases =  caseRepository.findAll();
+        String response = null;
+        if (!cases.isEmpty()) {
+            FhirContext ctx = FhirContext.forR4();
+            IParser parser = ctx.newJsonParser().setPrettyPrint(true);
+            Bundle bundle = caseMapper.caseListToBundle(cases);
+            response =  parser.encodeResourceToString(bundle);
+        }
+        return response;
     }
 }

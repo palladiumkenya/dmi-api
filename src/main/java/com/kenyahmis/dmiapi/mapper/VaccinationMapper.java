@@ -32,8 +32,6 @@ abstract class VaccinationMapper {
         // vaccine code
         CodeableConcept vaccineCodeConcept = new CodeableConcept();
         Coding vaccineCode = new Coding();
-//        vaccineCode.setSystem("http://hl7.org/fhir/sid/cvx");
-//        vaccineCode.setCode("56");
         vaccineCode.setDisplay(vaccination.getVaccination());
         vaccineCodeConcept.setCoding(List.of(vaccineCode));
         vaccineCodeConcept.setText(vaccination.getVaccination());

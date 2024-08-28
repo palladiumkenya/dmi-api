@@ -14,7 +14,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class CaseExtractConsumer {
@@ -121,7 +120,6 @@ public class CaseExtractConsumer {
                 Page<SubjectSummary> subjectPage = subjectRepository
                         .findByPatientUniqueIdAndSiteCode(aCase.getSubject().getPatientUniqueId(), aCase.getMflCode(),
                                 Pageable.ofSize(1));
-//                   AtomicReference<UUID> subjectId = new AtomicReference<>();
                     subjectPage.getContent()
                             .stream()
                             .findFirst()
@@ -136,7 +134,6 @@ public class CaseExtractConsumer {
                                 // update case record
                                 aCase.setSubject(foundSubject);
                             } );
-//                caseRepository.save(aCase);
             }
             aCase.setBatchId(caseMessageDto.getBatchId());
             aCase.setEmrId(emrId);

@@ -25,8 +25,7 @@ abstract class RiskFactorMapper {
         riskFactorCondition.setId(riskFactor.getId().toString());
         CodeableConcept riskFactorConcept = new CodeableConcept();
         Coding riskFactorCoding = new Coding();
-//        riskFactorCoding.setSystem("http://loinc.org");
-//        riskFactorCoding.setCode("http://loinc.org");
+        riskFactorCoding.setSystem("http://staging.org/riskfactor");
         riskFactorCoding.setDisplay("Diabetes");
         riskFactorConcept.setCoding(List.of(riskFactorCoding));
         riskFactorCondition.setCode((riskFactorConcept));

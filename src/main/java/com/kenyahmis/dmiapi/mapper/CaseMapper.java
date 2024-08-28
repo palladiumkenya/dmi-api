@@ -186,7 +186,19 @@ public abstract class CaseMapper {
         bundleEntryComponents.addAll(flaggedConditionMapper.flaggedConditionToBundleEntryComponent(illnessCase.getFlaggedConditions()));
         bundleEntryComponents.add(subjectMapper.subjectToBundleEntryComponent(illnessCase.getSubject()));
         bundle.setEntry(bundleEntryComponents);
+        return bundle;
+    }
 
+    public Bundle caseListToBundle(List<IllnessCase> cases) {
+        Bundle bundle = new Bundle();
+        bundle.setType(Bundle.BundleType.SEARCHSET);
+        List<Bundle.BundleEntryComponent> bundleEntryComponents = new ArrayList<>();
+        cases.forEach(illnessCase -> {
+            Bundle.BundleEntryComponent bundleEntryComponent = new Bundle.BundleEntryComponent();
+            bundleEntryComponent.setResource(caseToBundle(illnessCase));
+            bundleEntryComponents.add(bundleEntryComponent);
+        });
+        bundle.setEntry(bundleEntryComponents);
         return bundle;
     }
 
