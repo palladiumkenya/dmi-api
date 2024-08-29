@@ -15,7 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Service
@@ -31,7 +34,8 @@ public class CaseReportService {
     }
 
     public Page<CaseDto> getReports(String startDate, String endDate, Pageable pageable) {
-        Page<IllnessCase> casePage = caseRepository.findAll(pageable);
+        Page<IllnessCase> casePage = caseRepository.findAllByLoadDateBetween(resolveStartDate(startDate),
+                resolveEndDate(endDate), pageable);
         return new PageData<>(caseMapper.caseToCaseDto(casePage.getContent()), casePage.getPageable(), casePage.getTotalElements());
     }
 
@@ -42,21 +46,39 @@ public class CaseReportService {
             FhirContext ctx = FhirContext.forR4();
             IParser parser = ctx.newJsonParser().setPrettyPrint(true);
             Bundle bundle = caseMapper.caseToBundle(illnessCase);
-            response =  parser.encodeResourceToString(bundle);
+            response = parser.encodeResourceToString(bundle);
             LOG.info("Response: {}", response);
         }
-       return response;
+        return response;
     }
 
     public String getCaseReports(String startDate, String endDate, Pageable pageable) {
-        List<IllnessCase> cases =  caseRepository.findAll();
-        String response = null;
-        if (!cases.isEmpty()) {
-            FhirContext ctx = FhirContext.forR4();
-            IParser parser = ctx.newJsonParser().setPrettyPrint(true);
-            Bundle bundle = caseMapper.caseListToBundle(cases);
-            response =  parser.encodeResourceToString(bundle);
+        Page<IllnessCase> cases = caseRepository.findAllByLoadDateBetween(resolveStartDate(startDate),
+                resolveEndDate(endDate), pageable);
+        FhirContext ctx = FhirContext.forR4();
+        IParser parser = ctx.newJsonParser().setPrettyPrint(true);
+        Bundle bundle = caseMapper.caseListToBundle(cases.getContent());
+        bundle.setTotal((int) cases.getTotalElements());
+        return parser.encodeResourceToString(bundle);
+    }
+    private LocalDateTime resolveStartDate(String startDate) {
+        LocalDateTime loadDateStart;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        if (startDate == null) {
+            loadDateStart = LocalDate.of(2023, 1, 1).atStartOfDay();
+        } else {
+            loadDateStart = LocalDate.parse(startDate, formatter).atStartOfDay();
         }
-        return response;
+        return loadDateStart;
+    }
+    private LocalDateTime resolveEndDate(String endDate) {
+        LocalDateTime loadDateEnd;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        if (endDate == null) {
+            loadDateEnd = LocalDateTime.now();
+        } else {
+            loadDateEnd = LocalDate.parse(endDate, formatter).atTime(LocalTime.MAX);
+        }
+        return loadDateEnd;
     }
 }
