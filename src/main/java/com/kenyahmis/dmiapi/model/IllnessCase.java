@@ -1,6 +1,5 @@
 package com.kenyahmis.dmiapi.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -16,10 +15,10 @@ public class IllnessCase {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @JoinColumn(name = "batchId", referencedColumnName = "id")
+    @JoinColumn(name = "batch_id", referencedColumnName = "id")
     private UUID batchId;
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "subjectId", referencedColumnName = "id")
+    @JoinColumn(name = "subject_id", referencedColumnName = "id")
     private Subject subject;
     @JoinColumn(name = "emrId", referencedColumnName = "id")
     private UUID emrId;

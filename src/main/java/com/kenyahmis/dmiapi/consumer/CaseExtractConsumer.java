@@ -5,6 +5,7 @@ import com.kenyahmis.dmiapi.mapper.CaseMapper;
 import com.kenyahmis.dmiapi.model.*;
 import com.kenyahmis.dmiapi.repository.*;
 import com.kenyahmis.dmiapi.service.BatchService;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ public class CaseExtractConsumer {
         this.caseMapper = caseMapper;
     }
 
+    @Transactional
     @KafkaListener(id = "visitListener", topics = "visitTopic", containerFactory = "kafkaListenerContainerFactory")
     public void listenToMessage(List<CaseMessageDto> messages) {
         Set<UUID> batchIdList = new HashSet<>();
@@ -45,7 +47,9 @@ public class CaseExtractConsumer {
             if (emr.isPresent()) {
                 emrId = emr.get().getId();
             }
+
             if (optionalIllnessCase.isPresent()) {
+                LOGGER.info("Updating an existing case");
                 // updated case
                 aCase = caseMapper.caseDtoToIllnessCase(caseDto, optionalIllnessCase.get());
                 IllnessCase savedCase = optionalIllnessCase.get();
@@ -108,29 +112,33 @@ public class CaseExtractConsumer {
                             .findFirst().orElse(null);
                     flaggedCondition.setId(uuid);
                 });
-
             } else {
                 // new case
+                LOGGER.info("Creating a new case");
                 aCase = caseMapper.caseDtoToIllnessCase(caseDto, null);
                 // resolve subject
                 Page<SubjectSummary> subjectPage = subjectRepository
                         .findByPatientUniqueIdAndSiteCode(aCase.getSubject().getPatientUniqueId(), aCase.getMflCode(),
                                 Pageable.ofSize(1));
-//                if (!subjectPage.isEmpty()) {
-
                     subjectPage.getContent()
                             .stream()
                             .findFirst()
                             .ifPresent(subjectSummary -> {
                                 LOGGER.info("Found existing subjects (PatientIdentifier:mflCode:id) {}:{}:{}",
                                         aCase.getSubject().getPatientUniqueId(), aCase.getMflCode(), subjectSummary.getSubjectId());
-                                aCase.getSubject().setId(subjectSummary.getSubjectId());
+                                Subject foundSubject = aCase.getSubject();
+                                foundSubject.setId(subjectSummary.getSubjectId());
+                                aCase.setSubject(null);
+                                // insert case record
+                                caseRepository.save(aCase);
+                                // update case record
+                                aCase.setSubject(foundSubject);
                             } );
-//                }
             }
             aCase.setBatchId(caseMessageDto.getBatchId());
             aCase.setEmrId(emrId);
             caseRepository.save(aCase);
+            LOGGER.info("caseId: {}", aCase.getId());
             batchIdList.add(caseMessageDto.getBatchId());
         });
         batchIdList.forEach(batchService::updateBatchOperation);
