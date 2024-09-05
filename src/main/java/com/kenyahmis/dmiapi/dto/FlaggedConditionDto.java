@@ -11,8 +11,10 @@ public class FlaggedConditionDto {
     @NotBlank
     @Schema(example = "3455", description = "The unique identifier for the flagged condition")
     private String conditionId;
-    @Schema(description = "Condition that was automatically flagged by the EMR. Options include: DYSENTERY, CHOLERA," +
-            " ILI, SARI, RIFT VALLEY FEVER, MALARIA, CHIKUNGUNYA, POLIOMYELITIS, VIRAL HAEMORRHAGIC FEVER, MEASLES", example = "DYSENTERY")
+    @Schema(description = "Condition that was automatically flagged by the EMR. Options include: Acceptable syndromes are: " +
+            "ACUTE JAUNDICE SYNDROME, ACUTE MENINGITIS AND ENCEPHALITIS  SYNDROME, ACUTE FLACCID PARALYSIS, " +
+            "SEVERE ACUTE RESPIRATORY INFECTION, ACUTE HAEMORRHAGIC FEVER, ACUTE WATERY DIARRHOEAL, NEUROLOGICAL  SYNDROME, " +
+            "ACUTE FEBRILE RASH INFECTIONS, ACUTE FEBRILE ILLNESS, ACUTE HAEMORRHAGIC FEVER", example = "DYSENTERY")
     @NotBlank
     @ValidFlaggedCondition
     private String conditionName;
