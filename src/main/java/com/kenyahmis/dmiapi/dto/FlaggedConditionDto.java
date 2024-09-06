@@ -14,7 +14,8 @@ public class FlaggedConditionDto {
     @Schema(description = "Condition that was automatically flagged by the EMR. Options include: Acceptable syndromes are: " +
             "ACUTE JAUNDICE SYNDROME, ACUTE MENINGITIS AND ENCEPHALITIS  SYNDROME, ACUTE FLACCID PARALYSIS, " +
             "SEVERE ACUTE RESPIRATORY INFECTION, ACUTE HAEMORRHAGIC FEVER, ACUTE WATERY DIARRHOEAL, NEUROLOGICAL  SYNDROME, " +
-            "ACUTE FEBRILE RASH INFECTIONS, ACUTE FEBRILE ILLNESS, ACUTE HAEMORRHAGIC FEVER", example = "DYSENTERY")
+            "ACUTE FEBRILE RASH INFECTIONS, ACUTE FEBRILE ILLNESS, ACUTE HAEMORRHAGIC FEVER, MPOX, INFLUENZA LIKE ILLNESS, " +
+            "SEVERE ACUTE RESPIRATORY INFECTION", example = "NEUROLOGICAL  SYNDROME")
     @NotBlank
     @ValidFlaggedCondition
     private String conditionName;
