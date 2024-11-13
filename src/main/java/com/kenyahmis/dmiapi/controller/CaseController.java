@@ -11,6 +11,7 @@ import com.kenyahmis.dmiapi.model.BatchAPIResponse;
 import com.kenyahmis.dmiapi.model.BatchOperation;
 import com.kenyahmis.dmiapi.repository.BatchOperationsRepository;
 import com.kenyahmis.dmiapi.service.CaseReportService;
+import com.kenyahmis.dmiapi.service.ReportImportService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -35,13 +37,15 @@ public class CaseController {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final BatchOperationsRepository batchOperationsRepository;
     private final CaseReportService caseReportService;
+    private final ReportImportService reportImportService;
     private final Logger LOG = LoggerFactory.getLogger(CaseController.class);
 
     public CaseController(KafkaTemplate<String, Object> kafkaTemplate, BatchOperationsRepository batchOperationsRepository,
-                          CaseReportService caseReportService) {
+                          CaseReportService caseReportService, ReportImportService reportImportService) {
         this.kafkaTemplate = kafkaTemplate;
         this.batchOperationsRepository = batchOperationsRepository;
         this.caseReportService = caseReportService;
+        this.reportImportService = reportImportService;
     }
 
     @GetMapping(value = "/case")
@@ -63,6 +67,14 @@ public class CaseController {
         return caseReportService.getCaseReport(UUID.fromString(uuid));
     }
 
+    @PostMapping(value = "/case/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    private ResponseEntity<?> uploadCaseExport(@RequestPart(value = "file") MultipartFile file,
+                                               @AuthenticationPrincipal Jwt jwt) {
+        String emrName = jwt.getClaimAsString("emr");
+        LOG.info("Processing case report file from {}", emrName);
+        reportImportService.parseExport(file, emrName);
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
     @Operation(summary = "Submit a case report. The API creates a case report in the staging area and updates it if an exising one is found")
     @PostMapping(value = "/case/batch")
     private ResponseEntity<?> addBatchCases(@RequestBody @Valid ValidList<CaseDto> request,
