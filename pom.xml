@@ -19,6 +19,7 @@
         <lombok.version>1.18.20</lombok.version>
         <keycloak.version>22.0.3</keycloak.version>
         <hapi.version>7.2.1</hapi.version>
+        <poi.version>5.3.0</poi.version>
     </properties>
     <dependencies>
         <dependency>
@@ -98,6 +99,20 @@
             <artifactId>hapi-fhir-structures-r4</artifactId>
             <version>${hapi.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+
+
     </dependencies>
 
     <dependencyManagement>
