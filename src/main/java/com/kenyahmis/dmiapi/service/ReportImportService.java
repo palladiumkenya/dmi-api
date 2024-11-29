@@ -6,6 +6,7 @@ import com.kenyahmis.dmiapi.model.BatchOperation;
 import com.kenyahmis.dmiapi.repository.BatchOperationsRepository;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -32,48 +33,57 @@ public class ReportImportService {
     }
 
     public void parseExport(final MultipartFile file, final String emrName) {
-
         try {
-            Workbook workbook = new XSSFWorkbook(file.getInputStream());
-            ObjectMapper mapper = new ObjectMapper();
-            int sheetCount = workbook.getNumberOfSheets();
-            LOG.info("Number of sheets: {}", sheetCount);
+            LOG.info("File name is: {}", file.getOriginalFilename());
+            Workbook workbook = null;
+            if (file.getOriginalFilename().endsWith("xlsx")) {
+                workbook = new XSSFWorkbook(file.getInputStream());
+            } else if (file.getOriginalFilename().endsWith("xls")) {
+                workbook = new HSSFWorkbook(file.getInputStream());
+            }
+            if (workbook != null) {
+                ObjectMapper mapper = new ObjectMapper();
+                int sheetCount = workbook.getNumberOfSheets();
+                LOG.info("Number of sheets: {}", sheetCount);
 
-            List<CaseDto> caseDtoList = extractCaseDtos(workbook.getSheetAt(0));
-            Map<String, Set<FlaggedConditionDto>> flaggedConditions = extractFlaggedConditions(workbook.getSheetAt(1));
-            Map<String, Set<ComplaintDto>> complaints = extractComplaints(workbook.getSheetAt(2));
-            Map<String, Set<VaccinationDto>> vaccinations = extractVaccinations(workbook.getSheetAt(3));
-            Map<String, Set<DiagnosisDto>> diagnosis = extractDiagnosis(workbook.getSheetAt(4));
-            Map<String, Set<RiskFactorDto>> riskFactors = extractRiskFactors(workbook.getSheetAt(5));
-            Map<String, Set<VitalSignsDto>> vitalSigns = extractVitalSigns(workbook.getSheetAt(6));
-            Map<String,Set<LabDto>> labs = extractLabDtos(workbook.getSheetAt(7));
-            // link case to dependencies
+                List<CaseDto> caseDtoList = extractCaseDtos(workbook.getSheetAt(0));
+//            Map<String, Set<FlaggedConditionDto>> flaggedConditions = extractFlaggedConditions(workbook.getSheetAt(1));
+                Map<String, Set<ComplaintDto>> complaints = extractComplaints(workbook.getSheetAt(1));
+//            Map<String, Set<VaccinationDto>> vaccinations = extractVaccinations(workbook.getSheetAt(3));
+                Map<String, Set<DiagnosisDto>> diagnosis = extractDiagnosis(workbook.getSheetAt(2));
+//            Map<String, Set<RiskFactorDto>> riskFactors = extractRiskFactors(workbook.getSheetAt(5));
+                Map<String, Set<VitalSignsDto>> vitalSigns = extractVitalSigns(workbook.getSheetAt(3));
+                Map<String,Set<LabDto>> labs = extractLabDtos(workbook.getSheetAt(4));
+                // link case to dependencies
 
-            for (CaseDto caseDto : caseDtoList) {
-                caseDto.setFlaggedConditions((flaggedConditions.get(caseDto.getCaseUniqueId()) == null ? new HashSet<>() : flaggedConditions.get(caseDto.getCaseUniqueId())));
-                caseDto.setComplaints((complaints.get(caseDto.getCaseUniqueId()) == null ? new HashSet<>() : complaints.get(caseDto.getCaseUniqueId())));
-                caseDto.setVaccinations((vaccinations.get(caseDto.getCaseUniqueId()) == null ? new HashSet<>() : vaccinations.get(caseDto.getCaseUniqueId())));
+                for (CaseDto caseDto : caseDtoList) {
+//                caseDto.setFlaggedConditions((flaggedConditions.get(caseDto.getCaseUniqueId()) == null ? new HashSet<>() : flaggedConditions.get(caseDto.getCaseUniqueId())));
+                    caseDto.setComplaints((complaints.get(caseDto.getCaseUniqueId()) == null ? new HashSet<>() : complaints.get(caseDto.getCaseUniqueId())));
+//                caseDto.setVaccinations((vaccinations.get(caseDto.getCaseUniqueId()) == null ? new HashSet<>() : vaccinations.get(caseDto.getCaseUniqueId())));
                 caseDto.setDiagnosis((diagnosis.get(caseDto.getCaseUniqueId()) == null ? new HashSet<>() : diagnosis.get(caseDto.getCaseUniqueId())));
-                caseDto.setRiskFactors((riskFactors.get(caseDto.getCaseUniqueId()) == null ? new HashSet<>() : riskFactors.get(caseDto.getCaseUniqueId())));
+//                caseDto.setRiskFactors((riskFactors.get(caseDto.getCaseUniqueId()) == null ? new HashSet<>() : riskFactors.get(caseDto.getCaseUniqueId())));
                 caseDto.setVitalSigns((vitalSigns.get(caseDto.getCaseUniqueId()) == null ? new HashSet<>() : vitalSigns.get(caseDto.getCaseUniqueId())));
                 caseDto.setLabs((labs.get(caseDto.getCaseUniqueId()) == null ? new HashSet<>() : labs.get(caseDto.getCaseUniqueId())));
-                Set<ConstraintViolation<CaseDto>> violations = validator.validate(caseDto);
-                if (!violations.isEmpty()) {
-                    StringBuilder sb = new StringBuilder();
-                    for (ConstraintViolation<CaseDto> violation : violations) {
-                        sb.append(violation.getPropertyPath().toString())
-                                .append(" ")
-                                .append(violation.getMessage()).append("\n");
+                    Set<ConstraintViolation<CaseDto>> violations = validator.validate(caseDto);
+                    if (!violations.isEmpty()) {
+                        StringBuilder sb = new StringBuilder();
+                        for (ConstraintViolation<CaseDto> violation : violations) {
+                            sb.append(violation.getPropertyPath().toString())
+                                    .append(" ")
+                                    .append(violation.getMessage()).append("\n");
+                        }
+                        LOG.error("Validation failed for case {}: {} " ,caseDto.getCaseUniqueId(), sb);
                     }
-                    LOG.error("Validation failed for case {}: {} " ,caseDto.getCaseUniqueId(), sb);
                 }
+                LOG.info("Cases dtos {}", mapper.writeValueAsString(caseDtoList));
+                // submit to kafka topic
+                BatchOperation batch = new BatchOperation(caseDtoList.size(), "INCOMPLETE",
+                        null, LocalDateTime.now());
+                batchOperationsRepository.save(batch);
+                caseDtoList.forEach(iCase -> kafkaTemplate.send("visitTopic", new CaseMessageDto(batch.getId(), iCase,  emrName)));
+
             }
-            LOG.info("Cases dtos {}", mapper.writeValueAsString(caseDtoList));
-            // submit to kafka topic
-            BatchOperation batch = new BatchOperation(caseDtoList.size(), "INCOMPLETE",
-                    null, LocalDateTime.now());
-            batchOperationsRepository.save(batch);
-            caseDtoList.forEach(iCase -> kafkaTemplate.send("visitTopic", new CaseMessageDto(batch.getId(), iCase,  emrName)));
+
         } catch (IOException e) {
             LOG.error("Failed to parse export file {}", file.getOriginalFilename(), e);
         }
@@ -82,33 +92,34 @@ public class ReportImportService {
     private List<CaseDto> extractCaseDtos(Sheet sheet) throws IOException {
         List<CaseDto> caseDtoList = new ArrayList<>();
         LOG.info("Last case row count is: {}", sheet.getLastRowNum());
-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+        int intialDataRow = 5;
+        for (int i = intialDataRow; i <= sheet.getLastRowNum(); i++) {
+//        for (int i = intialDataRow; i <= 10; i++) {
             Row row = sheet.getRow(i);
             if (getStringValue(row.getCell(0)) != null) {
                 CaseDto caseDto = new CaseDto();
                 SubjectDto subjectDto = new SubjectDto();
-                caseDto.setCaseUniqueId(getStringValue(row.getCell(0)));
-                caseDto.setHospitalIdNumber(getStringValue(row.getCell(1)));
-                caseDto.setInterviewDate(getStringValue(row.getCell(2)));
-                caseDto.setAdmissionDate(getStringValue(row.getCell(3)));
-                caseDto.setOutpatientDate(getStringValue(row.getCell(4)));
-                caseDto.setCreatedAt(getStringValue(row.getCell(5)));
-                caseDto.setUpdatedAt(getStringValue(row.getCell(6)));
-                caseDto.setFinalOutcome(getStringValue(row.getCell(7)));
-                caseDto.setFinalOutcomeDate(getStringValue(row.getCell(8)));
-                subjectDto.setPatientUniqueId(getStringValue(row.getCell(9)));
-                subjectDto.setNupi(getStringValue(row.getCell(10)));
-                subjectDto.setSex(getStringValue(row.getCell(11)));
-                subjectDto.setAddress(getStringValue(row.getCell(12)));
-                subjectDto.setCounty(getStringValue(row.getCell(13)));
-                subjectDto.setSubCounty(getStringValue(row.getCell(14)));
-                subjectDto.setDateOfBirth(getStringValue(row.getCell(15)));
+                caseDto.setCaseUniqueId(getStringValue(row.getCell(7)));
+                caseDto.setHospitalIdNumber(getStringValue(row.getCell(4)));
+                caseDto.setInterviewDate(getStringValue(row.getCell(8)));
+                caseDto.setAdmissionDate(getStringValue(row.getCell(9)));
+                caseDto.setOutpatientDate(getStringValue(row.getCell(10)));
+                caseDto.setCreatedAt(getStringValue(row.getCell(11)));
+                caseDto.setUpdatedAt(getStringValue(row.getCell(12)));
+                caseDto.setFinalOutcome(getStringValue(row.getCell(13)));
+                caseDto.setFinalOutcomeDate(getStringValue(row.getCell(10)));
+                subjectDto.setPatientUniqueId(getStringValue(row.getCell(0)));
+//                subjectDto.setNupi(getStringValue(row.getCell(1)));
+                subjectDto.setSex(getStringValue(row.getCell(2)));
+//                subjectDto.setAddress(getStringValue(row.getCell(12)));
+                subjectDto.setCounty(getStringValue(row.getCell(5)));
+                subjectDto.setSubCounty(getStringValue(row.getCell(6)));
+                subjectDto.setDateOfBirth(getStringValue(row.getCell(3)));
 
                 caseDto.setSubject(subjectDto);
                 caseDtoList.add(caseDto);
             }
         }
-
         return caseDtoList;
     }
 
@@ -131,22 +142,47 @@ public class ReportImportService {
         return flaggedConditionsMap;
     }
 
+    private Map<String, String> mapColumnValuesToMap(String columnValues) {
+        Map<String, String> map = new HashMap<>();
+        if (columnValues != null && !columnValues.trim().isEmpty()) {
+            String[] keyValueString = columnValues.split(",");
+            for (String keyValue : keyValueString) {
+//                LOG.info("Key value is: {}", keyValue);
+                String[] finalKeyValue = keyValue.split("\\|");
+                if (finalKeyValue.length == 2) {
+//                    LOG.info("Final Key value is: {}", Arrays.toString(finalKeyValue));
+                    String value = finalKeyValue[1].equals("-") ? null : finalKeyValue[1];
+                    map.put(finalKeyValue[0], value);
+                }
+            }
+        }
+        return map;
+    }
+
     private Map<String, Set<ComplaintDto>> extractComplaints(Sheet sheet) {
         Map<String, Set<ComplaintDto>> complaintsDtoMap = new HashMap<>();
-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+        int initialDataRow = 5;
+        for (int i = initialDataRow; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if(row != null) {
-                ComplaintDto complaintDto = new ComplaintDto();
-                complaintDto.setComplaintId(getStringValue(row.getCell(1)));
-                complaintDto.setComplaint(getStringValue(row.getCell(2)));
-                complaintDto.setOnsetDate(getStringValue(row.getCell(3)));
-                complaintDto.setDuration(getIntValue(row.getCell(4)));
-                complaintsDtoMap.merge(getStringValue(row.getCell(0)), Set.of(complaintDto),
-                        (a, b) -> {
-                            Set<ComplaintDto> newList = new HashSet<>(a);
-                            newList.addAll(b);
-                            return newList;
-                        });
+                String[] complaintIds = getStringValue(row.getCell(1)).split(",");
+                Map<String, String> complaintNames = mapColumnValuesToMap(getStringValue(row.getCell(2)));
+                Map<String, String> onsetDates = mapColumnValuesToMap(getStringValue(row.getCell(3)));
+                Map<String, String> durations = mapColumnValuesToMap(getStringValue(row.getCell(4)));
+                Set<ComplaintDto> complaintDtos = new HashSet<>();
+                for (String complaintId : complaintIds) {
+                    ComplaintDto complaintDto = new ComplaintDto();
+                    complaintDto.setComplaintId(complaintId);
+                    String complaintName = complaintNames.get(complaintId);
+                    complaintDto.setComplaint(complaintName);
+                    complaintDto.setOnsetDate(onsetDates.get(complaintName));
+                    complaintDto.setDuration(durations.get(complaintName) == null ? null : Integer.valueOf(durations.get(complaintName)));
+                    complaintDtos.add(complaintDto);
+                }
+                String caseUniqueId = getStringValue(row.getCell(0));
+                if (caseUniqueId != null && !caseUniqueId.trim().isEmpty()) {
+                    complaintsDtoMap.put(caseUniqueId, complaintDtos);
+                }
             }
         }
         return complaintsDtoMap;
@@ -176,21 +212,38 @@ public class ReportImportService {
 
     private Map<String, Set<DiagnosisDto>> extractDiagnosis(Sheet sheet) {
         Map<String, Set<DiagnosisDto>> diagnosisDtoMap = new HashMap<>();
-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+        int intialDataRow = 5;
+        for (int i = intialDataRow; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if(row != null) {
-                DiagnosisDto diagnosisDto = new DiagnosisDto();
-                diagnosisDto.setDiagnosisId(getStringValue(row.getCell(1)));
-                diagnosisDto.setDiagnosis(getStringValue(row.getCell(2)));
-                diagnosisDto.setDiagnosisDate(getStringValue(row.getCell(3)));
-                diagnosisDto.setSystem(getStringValue(row.getCell(4)));
-                diagnosisDto.setSystemCode(getStringValue(row.getCell(5)));
-                diagnosisDtoMap.merge(getStringValue(row.getCell(0)), Set.of(diagnosisDto),
-                        (a, b) -> {
-                            Set<DiagnosisDto> newList = new HashSet<>(a);
-                            newList.addAll(b);
-                            return newList;
-                        });
+                String[] diagnosisIds = getStringValue(row.getCell(1)).split(",");
+                Map<String, String> diagnosisNames = mapColumnValuesToMap(getStringValue(row.getCell(2)));
+                Map<String, String> diagnosisDates = mapColumnValuesToMap(getStringValue(row.getCell(3)));
+//                Map<String, String> diagnosisSystems = mapColumnValuesToMap(getStringValue(row.getCell(4)));
+//                Map<String,String> systemCodes = mapColumnValuesToMap(getStringValue(row.getCell(5)));
+                Set<DiagnosisDto> diagnosisDtos = new HashSet<>();
+                for (String diagnosisId : diagnosisIds) {
+                    DiagnosisDto diagnosisDto = new DiagnosisDto();
+                    diagnosisDto.setDiagnosisId(diagnosisId);
+                    String diagnosisName = diagnosisNames.get(diagnosisId);
+                    diagnosisDto.setDiagnosis(diagnosisName);
+                    diagnosisDto.setDiagnosisDate(diagnosisDates.get(diagnosisName));
+                    diagnosisDto.setSystem(getStringValue(row.getCell(4)));
+                    diagnosisDto.setSystemCode(getStringValue(row.getCell(5)));
+                    diagnosisDtos.add(diagnosisDto);
+                }
+                String caseUniqueId = getStringValue(row.getCell(0));
+                if (caseUniqueId != null && !caseUniqueId.trim().isEmpty()) {
+                    diagnosisDtoMap.put(caseUniqueId, diagnosisDtos);
+                }
+
+
+//                diagnosisDtoMap.merge(getStringValue(row.getCell(0)), Set.of(diagnosisDto),
+//                        (a, b) -> {
+//                            Set<DiagnosisDto> newList = new HashSet<>(a);
+//                            newList.addAll(b);
+//                            return newList;
+//                        });
             }
         }
         return diagnosisDtoMap;
@@ -217,9 +270,10 @@ public class ReportImportService {
 
     private Map<String, Set<VitalSignsDto>> extractVitalSigns(Sheet sheet) {
         Map<String, Set<VitalSignsDto>> vitalSignDtoMap = new HashMap<>();
-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+        int intialDataRow = 5;
+        for (int i = intialDataRow; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
-            if (row != null) {
+            if (row != null && getStringValue(row.getCell(0)) != null) {
                 VitalSignsDto vitalSignsDto = new VitalSignsDto();
                 vitalSignsDto.setTemperature(getDoubleValue(row.getCell(1)));
                 vitalSignsDto.setTemperatureMode(getStringValue(row.getCell(2)));
@@ -241,23 +295,31 @@ public class ReportImportService {
 
     private Map<String, Set<LabDto>> extractLabDtos(Sheet sheet) {
         Map<String, Set<LabDto>> labDtoMap = new HashMap<>();
-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+        int initialDataRow = 5;
+        for (int i = initialDataRow; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) {
-                LabDto labDto = new LabDto();
-                labDto.setOrderId(getStringValue(row.getCell(1)));
-                labDto.setTestResult(getStringValue(row.getCell(2)));
-                labDto.setLabDate(getStringValue(row.getCell(3)));
-                labDto.setTestName(getStringValue(row.getCell(4)));
-                labDto.setUnit(getStringValue(row.getCell(5)));
-                labDto.setUpperLimit(getStringValue(row.getCell(6)));
-                labDto.setLowerLimit(getStringValue(row.getCell(7)));
-                labDtoMap.merge(getStringValue(row.getCell(0)), Set.of(labDto),
-                        (a, b) -> {
-                            Set<LabDto> newList = new HashSet<>(a);
-                            newList.addAll(b);
-                            return newList;
-                        });
+                String labIdsCell = getStringValue(row.getCell(1));
+                if (labIdsCell != null && !labIdsCell.trim().isEmpty()) {
+                   String[] labIds = getStringValue(row.getCell(1)).split(",");
+                    Map<String, String> labTestNames = mapColumnValuesToMap(getStringValue(row.getCell(2)));
+                    Map<String, String> labTestDates = mapColumnValuesToMap(getStringValue(row.getCell(3)));
+                    Map<String, String> labTestResults = mapColumnValuesToMap(getStringValue(row.getCell(4)));
+                    Set<LabDto> labDtos = new HashSet<>();
+                    for (String labId : labIds) {
+                        LabDto labDto = new LabDto();
+                        labDto.setOrderId(labId);
+                        String labTestName = labTestNames.get(labId);
+                        labDto.setTestName(labTestName);
+                        labDto.setLabDate(labTestDates.get(labTestName));
+                        labDto.setTestResult(labTestResults.get(labTestName));
+                        labDtos.add(labDto);
+                    }
+                    String caseUniqueId = getStringValue(row.getCell(0));
+                    if (caseUniqueId != null && !caseUniqueId.trim().isEmpty()) {
+                        labDtoMap.put(caseUniqueId, labDtos);
+                    }
+                }
             }
         }
         return labDtoMap;
@@ -267,7 +329,7 @@ public class ReportImportService {
         String cellValue = null;
         if (cell != null) {
             switch (cell.getCellType()) {
-                case STRING -> cellValue = cell.getStringCellValue();
+                case STRING -> cellValue = cell.getStringCellValue().isBlank() ? null: cell.getStringCellValue().trim();
                 case NUMERIC -> cellValue =  Integer.toString(((int)cell.getNumericCellValue()));
             }
         }
@@ -278,7 +340,7 @@ public class ReportImportService {
         Double cellValue = null;
         if (cell != null) {
             switch (cell.getCellType()) {
-                case STRING -> cellValue = Double.valueOf(cell.getStringCellValue());
+                case STRING -> cellValue = Double.valueOf(cell.getStringCellValue().trim());
                 case NUMERIC -> cellValue = cell.getNumericCellValue();
             }
         }
