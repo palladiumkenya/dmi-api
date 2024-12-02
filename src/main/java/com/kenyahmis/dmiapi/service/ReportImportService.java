@@ -151,8 +151,8 @@ public class ReportImportService {
                 String[] finalKeyValue = keyValue.split("\\|");
                 if (finalKeyValue.length == 2) {
 //                    LOG.info("Final Key value is: {}", Arrays.toString(finalKeyValue));
-                    String value = finalKeyValue[1].equals("-") ? null : finalKeyValue[1];
-                    map.put(finalKeyValue[0], value);
+                    String value = finalKeyValue[1].equals("-") ? null : finalKeyValue[1].trim();
+                    map.put(finalKeyValue[0].trim(), value);
                 }
             }
         }
@@ -172,8 +172,8 @@ public class ReportImportService {
                 Set<ComplaintDto> complaintDtos = new HashSet<>();
                 for (String complaintId : complaintIds) {
                     ComplaintDto complaintDto = new ComplaintDto();
-                    complaintDto.setComplaintId(complaintId);
-                    String complaintName = complaintNames.get(complaintId);
+                    complaintDto.setComplaintId(complaintId.trim());
+                    String complaintName = complaintNames.get(complaintId).trim();
                     complaintDto.setComplaint(complaintName);
                     complaintDto.setOnsetDate(onsetDates.get(complaintName));
                     complaintDto.setDuration(durations.get(complaintName) == null ? null : Integer.valueOf(durations.get(complaintName)));
