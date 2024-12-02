@@ -83,7 +83,8 @@ public class CaseExtractConsumer {
                 aCase.getVitalSigns().forEach(vitalSign -> {
                     UUID uuid = savedCase.getVitalSigns()
                             .stream()
-                            .filter(v -> v.getVitalSignId().equals(vitalSign.getVitalSignId()))
+                            .filter(v -> v.getVitalSignId() != null
+                                    && v.getVitalSignId().equals(vitalSign.getVitalSignId()))
                             .map(VitalSign::getId)
                             .findFirst().orElse(null);
                     vitalSign.setId(uuid);

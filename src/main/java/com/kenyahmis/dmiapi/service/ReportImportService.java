@@ -115,7 +115,6 @@ public class ReportImportService {
                 subjectDto.setCounty(getStringValue(row.getCell(5)));
                 subjectDto.setSubCounty(getStringValue(row.getCell(6)));
                 subjectDto.setDateOfBirth(getStringValue(row.getCell(3)));
-
                 caseDto.setSubject(subjectDto);
                 caseDtoList.add(caseDto);
             }
@@ -236,8 +235,6 @@ public class ReportImportService {
                 if (caseUniqueId != null && !caseUniqueId.trim().isEmpty()) {
                     diagnosisDtoMap.put(caseUniqueId, diagnosisDtos);
                 }
-
-
 //                diagnosisDtoMap.merge(getStringValue(row.getCell(0)), Set.of(diagnosisDto),
 //                        (a, b) -> {
 //                            Set<DiagnosisDto> newList = new HashSet<>(a);
