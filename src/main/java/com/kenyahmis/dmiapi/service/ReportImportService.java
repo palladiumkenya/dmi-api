@@ -277,7 +277,7 @@ public class ReportImportService {
                 vitalSignsDto.setRespiratoryRate(getIntValue(row.getCell(3)));
                 vitalSignsDto.setOxygenSaturation(getIntValue(row.getCell(4)));
                 vitalSignsDto.setOxygenSaturationMode(getStringValue(row.getCell(5)));
-                vitalSignsDto.setVitalSignId(getStringValue(row.getCell(6)));
+                vitalSignsDto.setVitalSignId(getStringValue(row.getCell(0)));
                 vitalSignsDto.setVitalSignDate(getStringValue(row.getCell(7)));
                 vitalSignDtoMap.merge(getStringValue(row.getCell(0)), Set.of(vitalSignsDto),
                         (a, b) -> {
