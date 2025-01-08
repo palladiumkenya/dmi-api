@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mapper(uses = {ComplaintMapper.class, DiagnosisMapper.class, FlaggedConditionMapper.class, LabMapper.class,
-        RiskFactorMapper.class, SubjectMapper.class, VaccinationMapper.class, VitalSignMapper.class}
+        RiskFactorMapper.class, SubjectMapper.class, VaccinationMapper.class, VitalSignMapper.class, ARTLinkageMapper.class}
         , componentModel = "spring"
 )
 public abstract class CaseMapper {
@@ -42,6 +42,7 @@ public abstract class CaseMapper {
     @Mapping(source = "caseDto.diagnosis", target = "diagnosis")
     @Mapping(source = "caseDto.complaints", target = "complaints")
     @Mapping(source = "caseDto.vaccinations", target = "vaccinations")
+    @Mapping(source = "caseDto.artLinkages", target = "artLinkages")
     @Mapping(target = "loadDate", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "batchId", ignore = true)
@@ -68,6 +69,7 @@ public abstract class CaseMapper {
         illnessCase.getVaccinations().forEach(vaccination -> vaccination.setIllnessCase(sourceOfIds));
         illnessCase.getVitalSigns().forEach(vitalSign -> vitalSign.setIllnessCase(sourceOfIds));
         illnessCase.getRiskFactors().forEach(riskFactor -> riskFactor.setIllnessCase(sourceOfIds));
+        illnessCase.getArtLinkages().forEach(artLinkage -> artLinkage.setIllnessCase(sourceOfIds));
         illnessCase.setLoadDate(LocalDateTime.now());
     }
     public abstract List<CaseDto> caseToCaseDto(List<IllnessCase> illnessCases);

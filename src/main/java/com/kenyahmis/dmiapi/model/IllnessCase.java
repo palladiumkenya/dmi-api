@@ -51,6 +51,9 @@ public class IllnessCase {
     @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
     private List<Diagnosis> diagnosis;
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "illnessCase", cascade = CascadeType.ALL)
+    private List<ARTLinkage> artLinkages;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime loadDate;

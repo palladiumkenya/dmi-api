@@ -75,4 +75,7 @@ public class CaseDto {
     @JsonProperty("lab")
     @Valid
     private Set<LabDto> labs = new HashSet<>();
+    @JsonProperty("artLinkages")
+    @Valid
+    private Set<ARTLinkageDto> artLinkages = new HashSet<>();
 }

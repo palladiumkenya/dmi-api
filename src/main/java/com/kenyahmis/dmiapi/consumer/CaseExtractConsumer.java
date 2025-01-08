@@ -40,7 +40,7 @@ public class CaseExtractConsumer {
         Set<UUID> batchIdList = new HashSet<>();
         messages.forEach(caseMessageDto -> {
             CaseDto caseDto = caseMessageDto.getCaseDto();
-            Optional<IllnessCase>  optionalIllnessCase = caseRepository.findByVisitUniqueIdAndMflCode(caseDto.getCaseUniqueId(), caseDto.getHospitalIdNumber());
+            Optional<IllnessCase> optionalIllnessCase = caseRepository.findByVisitUniqueIdAndMflCode(caseDto.getCaseUniqueId(), caseDto.getHospitalIdNumber());
             IllnessCase aCase;
             UUID emrId = null;
             Optional<Emr> emr = emrRepository.findByEmrNameAndVoided(caseMessageDto.getEmr(), false);
@@ -112,6 +112,14 @@ public class CaseExtractConsumer {
                             .map(FlaggedCondition::getId)
                             .findFirst().orElse(null);
                     flaggedCondition.setId(uuid);
+                });
+                aCase.getArtLinkages().forEach(artLinkage -> {
+                    UUID uuid = savedCase.getArtLinkages()
+                            .stream()
+                            .filter(l -> l.getLinkageId().equals(artLinkage.getLinkageId()))
+                            .map(ARTLinkage::getId)
+                            .findFirst().orElse(null);
+                    artLinkage.setId(uuid);
                 });
             } else {
                 // new case
