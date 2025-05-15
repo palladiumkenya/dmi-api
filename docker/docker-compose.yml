@@ -3,9 +3,10 @@ version: '3.5'
 services:
   dmi-api:
     build: ../
-    image: pnthusi/dmi-api:latest
+    container_name: dmi-api-${LABEL}
+    image: khmis/dmi-api:latest-${LABEL}
     ports:
-      - "8088:8088"
+      - "${DMI_API_PORT:-8088}:8088"
     depends_on:
       - kafka-01
       - dmi-postgres
@@ -21,7 +22,7 @@ services:
       KEYCLOAK_TOKEN_URL: ${KEYCLOAK_TOKEN_URL}
       SPRING_DOC_SERVER_URL: ${SPRING_DOC_SERVER_URL}
   dmi-postgres:
-    container_name: postgres_container
+    container_name: dmi-postgres-container-${LABEL}
     image: postgres:11-bullseye
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -31,12 +32,13 @@ services:
       - ./pg_data:/data/postgres
       - ./init/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     restart: unless-stopped
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.3
+    container_name: dmi-keycloak-${LABEL}
     ports:
-      - "8090:8080"
+      - "${KEYCLOAK_PORT:-8090}:8080"
     environment:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
@@ -45,9 +47,8 @@ services:
      --db-username ${KC_DB_USER} --db-password ${KC_DB_PASSWORD}"
   kafka-01:
     image: bitnami/kafka:3.4.1
+    container_name: dmi-kafka-01-${LABEL}
     user: root
-    ports:
-      - "9094:9094"
     restart: unless-stopped
     environment:
       BITNAMI_DEBUG: 'true'
@@ -56,19 +57,19 @@ services:
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
       KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka-01:9092,EXTERNAL://172.17.0.1:9094
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka-01:9092,EXTERNAL://kafka-01:9094
       KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka-01:9093
       ALLOW_PLAINTEXT_LISTENER: 'yes'
   dmi-metabase:
-    container_name: metabase_container
+    container_name: metabase-container-${LABEL}
     image: metabase/metabase:v0.47.0
     environment:
       - MB_DB_TYPE=postgres
       - MB_DB_DBNAME=${MB_DB_DBNAME}
-      - MB_DB_PORT=5432
+      - MB_DB_PORT=${POSTGRES_PORT:-5432}
       - MB_DB_USER=${MB_DB_USER}
       - MB_DB_PASS=${MB_DB_PASS}
       - MB_DB_HOST=${MB_DB_HOST}
     ports:
-      - "4000:3000"
+      - "${METABASE_PORT:-4000}:3000"
     restart: unless-stopped

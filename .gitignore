@@ -33,4 +33,7 @@ build/
 .vscode/
 
 *.env
-docker/pg_data/*
+docker/*
+!docker/*.yml
+!docker/*.example
+!docker/init/init.sql

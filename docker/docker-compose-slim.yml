@@ -1,14 +1,13 @@
 version: '3.5'
-
 services:
-  dmi-api:
+  dmi-api-slim:
     build: ../
-    image: pnthusi/dmi-api:latest
+    image: khmis/dmi-api:latest-${LABEL}
+    container_name: dmi-api-${LABEL}
     ports:
-      - "8088:8088"
+      - "${DMI_API_PORT:-8088}:8088"
     depends_on:
-      - kafka-01
-      - dmi-postgres
+      - kafka-01-slim
     restart: unless-stopped
     environment:
       DATABASE_URL: ${DATABASE_URL}
@@ -19,24 +18,10 @@ services:
       KEYCLOAK_JWT_CERT_URL: ${KEYCLOAK_JWT_CERT_URL}
       KEYCLOAK_TOKEN_URL: ${KEYCLOAK_TOKEN_URL}
       SPRING_DOC_SERVER_URL: ${SPRING_DOC_SERVER_URL}
-  dmi-postgres:
-    container_name: postgres_container
-    image: postgres:11-bullseye
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PGDATA: /data/postgres
-    volumes:
-      - ./pg_data:/data/postgres
-      - ./init/init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432:5432"
-    restart: unless-stopped
-  kafka-01:
+  kafka-01-slim:
     image: bitnami/kafka:3.4.1
+    container_name: dmi-kafka-01-${LABEL}
     user: root
-    ports:
-      - "9094:9094"
     restart: unless-stopped
     environment:
       BITNAMI_DEBUG: 'true'
@@ -45,6 +30,6 @@ services:
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
       KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka-01:9092,EXTERNAL://172.17.0.1:9094
-      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka-01:9093
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka-01-slim:9092,EXTERNAL://kafka-01-slim:9094
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka-01-slim:9093
       ALLOW_PLAINTEXT_LISTENER: 'yes'
