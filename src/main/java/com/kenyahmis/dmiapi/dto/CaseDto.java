@@ -12,6 +12,7 @@ import lombok.Data;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 
 @Data
@@ -25,6 +26,7 @@ public class CaseDto {
     @Schema(description = "The facility MFLCode", example = "18529")
     @NotBlank
     private String hospitalIdNumber;
+    private UUID emrId;
     @Schema(description = "The status of the submitted case report. Options include preliminary | final | amended | entered-in-error", example = "final")
     @NotBlank
     @ValidCaseStatus

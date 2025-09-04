@@ -46,7 +46,7 @@ public abstract class CaseMapper {
     @Mapping(target = "loadDate", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "batchId", ignore = true)
-    @Mapping(target = "emrId", ignore = true)
+    @Mapping(source = "caseDto.emrId", target = "emrId")
     public abstract IllnessCase caseDtoToIllnessCase(CaseDto caseDto, IllnessCase savedIllnessCase);
 
     @Mapping(source = "illnessCase.visitUniqueId", target = "caseUniqueId")
